@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "957799988864",
+    "project_id": "earn-for-all-6d227",
+    "storage_bucket": "earn-for-all-6d227.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:957799988864:android:cf1e502ce1f71cb084b065",
+        "android_client_info": {
+          "package_name": "com.example.earn_for_all"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlq5z0pks6zhpRVcGdhaBWPK8xwoaudBQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

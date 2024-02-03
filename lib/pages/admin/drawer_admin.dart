@@ -1,5 +1,6 @@
 import 'package:earn_for_all/pages/admin/add_message.dart';
 import 'package:earn_for_all/pages/admin/distribuer.dart';
+import 'package:earn_for_all/pages/admin/transactions_admin.dart';
 import 'package:earn_for_all/theme/colors.dart';
 import 'package:earn_for_all/widgets/copiable_text.dart';
 import 'package:flutter/material.dart';
@@ -150,6 +151,41 @@ class _DrawerAdminState extends State<DrawerAdmin> {
                                 ),
                                 subtitle: Text(
                                   "Distribuez les gains aux utilisateurs",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color: primary),
+                                ),
+                                hoverColor: mainFontColor,
+                                tileColor: primary,
+                                textColor: Colors.white,
+                              ),
+                              Divider(),
+                            ],
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => TransactionAdmin()));
+                          },
+                          child: Column(
+                            children: [
+                              Divider(),
+                              ListTile(
+                                leading: Icon(
+                                  Icons.person,
+                                  color: primary,
+                                ),
+                                title: Text(
+                                  'TRANSACTIONS',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w900,
+                                      color: primary),
+                                ),
+                                subtitle: Text(
+                                  "VOIR LES TRANSACTIONS EN COURS",
                                   style: TextStyle(
                                       fontWeight: FontWeight.w500,
                                       color: primary),
