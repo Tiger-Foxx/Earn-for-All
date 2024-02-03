@@ -1,3 +1,4 @@
+import 'package:earn_for_all/theme/colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -36,6 +37,26 @@ class ForgotPasswordScreen extends StatelessWidget {
               key: _formKey,
               child: Column(
                 children: [
+                  SizedBox(height: 40),
+                  SizedBox(
+                    height: 185,
+                    child: Center(
+                      child: Image.asset(
+                        'assets/images/logoEFA (1).jpg',
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: Text(
+                      "Un email de reinitialisation de mot de passe vous sera envoye",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        color: mainFontColor,
+                      ),
+                    ),
+                  ),
                   // Un champ de texte pour saisir l'email
                   Padding(
                     padding: const EdgeInsets.all(18.0),
