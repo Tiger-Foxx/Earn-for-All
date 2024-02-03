@@ -1,4 +1,8 @@
+import 'package:earn_for_all/pages/authentication/login.dart';
+import 'package:earn_for_all/pages/other/Splash_screen.dart';
 import 'package:earn_for_all/pages/other/home_page.dart';
+import 'package:earn_for_all/services/Authentification.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -15,6 +19,15 @@ class DailyPage extends StatefulWidget {
 }
 
 class _DailyPageState extends State<DailyPage> {
+  String? getUserEmail() {
+    var _Auth = FirebaseAuth.instance;
+
+    // Obtenir l'objet User avec un null check
+    User user = _Auth.currentUser!;
+    // Retourner l'email de l'utilisateur
+    return user.email.toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     DateTime today = DateTime.now();
@@ -54,9 +67,27 @@ class _DailyPageState extends State<DailyPage> {
                           color: mainFontColor,
                         ),
                       ),
-                      Icon(
-                        Icons.more_vert,
-                        color: mainFontColor,
+                      GestureDetector(
+                        onTap: () async {
+                          showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              isDismissible: false,
+                              builder: (BuildContext context) {
+                                return const Splash_screen(); // votre page de chargement
+                              });
+                          await Future.delayed(const Duration(seconds: 2), () {
+                            Navigator.of(context).pop(); // fermer la feuille
+                          });
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => Login()));
+                          Authentification().signOut();
+                        },
+                        child: Icon(
+                          Icons.logout,
+                          size: 37,
+                          color: mainFontColor,
+                        ),
                       )
                     ],
                   ),
@@ -83,7 +114,7 @@ class _DailyPageState extends State<DailyPage> {
                         child: Column(
                           children: [
                             Text(
-                              "donfackarthur750@gmail.com",
+                              getUserEmail() ?? "",
                               style: TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,

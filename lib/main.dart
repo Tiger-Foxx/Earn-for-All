@@ -1,9 +1,15 @@
+import 'package:earn_for_all/firebase_options.dart';
 import 'package:earn_for_all/pages/other/Splash_screen.dart';
 import 'package:earn_for_all/pages/authentication/login.dart';
 import 'package:earn_for_all/pages/authentication/register.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 

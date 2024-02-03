@@ -1,10 +1,13 @@
 import 'package:earn_for_all/gen/assets.gen.dart';
+import 'package:earn_for_all/models/USER.dart';
 import 'package:earn_for_all/pages/other/Splash_screen.dart';
 import 'package:earn_for_all/pages/other/home_page.dart';
 import 'package:earn_for_all/pages/authentication/login.dart';
 import 'package:earn_for_all/pages/authentication/register.dart';
+import 'package:earn_for_all/services/Authentification.dart';
 import 'package:earn_for_all/theme/colors.dart';
 import 'package:earn_for_all/widgets/drawer_presentation.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -17,6 +20,8 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register>
     with SingleTickerProviderStateMixin {
+  var utilisateur;
+  bool _isObscure = true;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   late AnimationController lottieController;
   @override
@@ -41,6 +46,12 @@ class _RegisterState extends State<Register>
     super.dispose();
   }
 
+  // Créer une clé globale pour le formulaire
+  final _formKey = GlobalKey<FormState>();
+  // Créer un modèle d'utilisateur avec des attributs email et mot de passe
+  USER _user = USER();
+  Authentification inscripteur = Authentification();
+  bool _isLoading = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,7 +122,7 @@ class _RegisterState extends State<Register>
                         const Icon(Icons.mail, color: Color(0xFFA8A8A8)),
                   ),
                   SizedBox(height: 14),
-                  _textField(
+                  _textField2(
                     hintText: 'Votre mot de passe',
                     prefixIcon:
                         const Icon(Icons.lock, color: Color(0xFFA8A8A8)),
@@ -120,7 +131,7 @@ class _RegisterState extends State<Register>
                   Row(
                     children: [
                       Expanded(
-                        child: _textField(
+                        child: _textField2(
                           hintText: 'Validez votre mot de passe',
                           prefixIcon: const Icon(Icons.vpn_key,
                               color: Color(0xFFA8A8A8)),
@@ -197,9 +208,72 @@ class _RegisterState extends State<Register>
 
   Widget _button1({required String text, bool isTransparent = false}) =>
       ElevatedButton(
-        onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => HomePage()));
+        onPressed: () async {
+          // Valider et soumettre le formulaire
+          if (_formKey.currentState!.validate()) {
+            // Enregistrer les données dans le modèle d'utilisateur
+            _formKey.currentState!.save();
+            // Envoyer les données à une API externe
+            setState(() {
+              _isLoading = true;
+            });
+            utilisateur =
+                await inscripteur.signUp(_user.email!, _user.password);
+            setState(() {
+              _isLoading = false;
+            });
+
+            var verif = utilisateur;
+            if (verif != 0 || verif != null) {
+              await showSuccessfulDialog();
+              Future.delayed(Duration(seconds: 0), () {
+                if (mounted) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                  );
+                }
+              });
+            } else {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      backgroundColor: Colors.white,
+                      title: Text(
+                        "OUPS",
+                        style: TextStyle(
+                            fontFamily: 'Poppins', color: Colors.white),
+                      ),
+                      content: SizedBox(
+                        height: 195,
+                        child: Column(
+                          children: [
+                            Text(
+                              "Verifiez, l'email, le mot de passe ou votre connexion internet",
+                              style: TextStyle(
+                                  fontFamily: 'Poppins', color: Colors.white),
+                            ),
+                            Center(
+                              child: Lottie.asset(
+                                  "assets/lotties/animation_lkqn0ikf.json",
+                                  animate: true),
+                            ),
+                          ],
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          child: Text("OK"),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ],
+                    );
+                  });
+            }
+          }
         },
         style: ElevatedButton.styleFrom(
           backgroundColor:
@@ -219,10 +293,31 @@ class _RegisterState extends State<Register>
       );
 
   Widget _button2({required String text, bool isTransparent = false}) => Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => HomePage()));
+        child: ElevatedButton.icon(
+          icon: Image.asset(
+            'assets/images/google.png',
+            width: 26,
+          ),
+          onPressed: () async {
+            // Mettre l'état de la connexion à vrai
+            setState(() {
+              _isLoading = true;
+            });
+            // Appeler la fonction signInWithGoogle avec await
+            var utilisateur = await inscripteur.GoogleSignUp();
+            // Si la connexion réussit, mettre l'état de la connexion à faux
+            setState(() {
+              _isLoading = false;
+            });
+            await showSuccessfulDialog();
+            Future.delayed(Duration(seconds: 0), () {
+              if (mounted) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage()),
+                );
+              }
+            });
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: isTransparent
@@ -232,24 +327,19 @@ class _RegisterState extends State<Register>
             shadowColor: Colors.transparent,
             fixedSize: Size(250, 50),
           ),
-          child: Row(
-            children: [
-              Icon(Icons.mail),
-              Text(
-                text,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: isTransparent ? Colors.white : Colors.white,
-                ),
-              ),
-            ],
+          label: Text(
+            text,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: isTransparent ? Colors.white : Colors.white,
+            ),
           ),
         ),
       );
 
   Widget _textField({required String hintText, required Widget prefixIcon}) =>
-      TextField(
+      TextFormField(
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(
@@ -266,8 +356,132 @@ class _RegisterState extends State<Register>
           enabledBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Color(0xFFD0D0D0))),
         ),
+        keyboardType: TextInputType
+            .emailAddress, // pour avoir un clavier adapté aux emails
+        // Ajouter un validateur pour le champ email
+        validator: (value) {
+          // Vérifier si le texte est vide
+          if (value == null || value.isEmpty) {
+            return 'Veuillez entrer votre email';
+          }
+          // Vérifier si le texte respecte un format d'email
+          if (!EmailValidator.validate(value)) {
+            return 'Veuillez entrer un email valide';
+          }
+          // Si tout est ok, renvoyer null
+          _user.email = value;
+          return null;
+        },
+        onChanged: (value) {
+          _user.email = value;
+        },
       );
-  void showSuccessfulDialog() => showDialog(
+
+  Widget _textField2({required String hintText, required Widget prefixIcon}) =>
+      TextFormField(
+        obscureText: _isObscure,
+        decoration: InputDecoration(
+          suffixIcon: IconButton(
+            icon: Icon(
+              // Changer l'icône en fonction de la visibilité du mot de passe
+              _isObscure ? Icons.visibility : Icons.visibility_off,
+            ),
+            onPressed: () {
+              // Inverser la valeur de la variable booléenne
+              setState(() {
+                _isObscure = !_isObscure;
+              });
+            },
+          ),
+          hintText: hintText,
+          hintStyle: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+            color: const Color(0xFFA8A8A8),
+          ),
+          prefixIcon: prefixIcon,
+          contentPadding: EdgeInsets.symmetric(horizontal: 17, vertical: 22),
+          border: const OutlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFFD0D0D0))),
+          focusedBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFFD0D0D0))),
+          enabledBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFFD0D0D0))),
+        ),
+        keyboardType: TextInputType
+            .emailAddress, // pour avoir un clavier adapté aux emails
+        // Ajouter un validateur pour le champ email
+        validator: (value) {
+          // Vérifier si le texte est vide
+          if (value == null || value.isEmpty) {
+            return 'Veuillez entrer votre mot de passe';
+          }
+          // Vérifier si le texte respecte un format d'email
+          if (!EmailValidator.validate(value)) {
+            return 'Veuillez entrer un mot de passe valide';
+          }
+          // Si tout est ok, renvoyer null
+          _user.password = value;
+          return null;
+        },
+        onChanged: (value) {
+          _user.password = value;
+        },
+      );
+
+  Widget _textField3({required String hintText, required Widget prefixIcon}) =>
+      TextFormField(
+        obscureText: _isObscure,
+        decoration: InputDecoration(
+          suffixIcon: IconButton(
+            icon: Icon(
+              // Changer l'icône en fonction de la visibilité du mot de passe
+              _isObscure ? Icons.visibility : Icons.visibility_off,
+            ),
+            onPressed: () {
+              // Inverser la valeur de la variable booléenne
+              setState(() {
+                _isObscure = !_isObscure;
+              });
+            },
+          ),
+          hintText: hintText,
+          hintStyle: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+            color: const Color(0xFFA8A8A8),
+          ),
+          prefixIcon: prefixIcon,
+          contentPadding: EdgeInsets.symmetric(horizontal: 17, vertical: 22),
+          border: const OutlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFFD0D0D0))),
+          focusedBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFFD0D0D0))),
+          enabledBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFFD0D0D0))),
+        ),
+        keyboardType: TextInputType
+            .emailAddress, // pour avoir un clavier adapté aux emails
+        // Ajouter un validateur pour le champ email
+        validator: (value) {
+          // Vérifier si le texte est vide
+          if (value == null || value.isEmpty) {
+            return 'Veuillez entrer votre mot de passe';
+          }
+          // Vérifier si le texte respecte un format d'email
+          if (value != _user.password) {
+            return 'les mots de passe ne correspondent pas ';
+          }
+          // Si tout est ok, renvoyer null
+          _user.password = value;
+          return null;
+        },
+        onChanged: (value) {
+          _user.password = value;
+        },
+      );
+
+  Future showSuccessfulDialog() => showDialog(
       context: context,
       builder: (context) => Dialog(
             backgroundColor: primary,
@@ -281,9 +495,9 @@ class _RegisterState extends State<Register>
               const SizedBox(height: 8),
               const Center(
                 child: Text(
-                  "Connexion Reussie",
+                  "Inscription Reussie",
                   style: TextStyle(
-                      color: Color.fromARGB(255, 45, 250, 52),
+                      color: mainFontColor,
                       fontSize: 21,
                       fontFamily: 'Poppins'),
                 ),
