@@ -1,6 +1,7 @@
 import 'package:earn_for_all/gen/assets.gen.dart';
 import 'package:earn_for_all/models/USER.dart';
 import 'package:earn_for_all/pages/other/Splash_screen.dart';
+import 'package:earn_for_all/pages/other/forgot.dart';
 import 'package:earn_for_all/pages/other/home_page.dart';
 import 'package:earn_for_all/pages/authentication/login.dart';
 import 'package:earn_for_all/pages/authentication/register.dart';
@@ -10,6 +11,7 @@ import 'package:earn_for_all/widgets/drawer_presentation.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -142,6 +144,8 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                         SizedBox(height: 60),
                         _button1(text: 'Se connecter'),
                         _button3(text: 'Creer un compte', isTransparent: true),
+                        _button4(
+                            text: 'Mot de passe oublie ?', isTransparent: true),
                       ],
                     ),
                   ),
@@ -417,6 +421,45 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
         onChanged: (value) {
           _user.password = value;
         },
+      );
+
+  Widget _button4({required String text, bool isTransparent = false}) =>
+      Padding(
+        padding: const EdgeInsets.all(18.0),
+        child: ElevatedButton(
+          onPressed: () async {
+            showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                isDismissible: false,
+                builder: (BuildContext context) {
+                  return const Splash_screen(); // votre page de chargement
+                });
+            await Future.delayed(const Duration(seconds: 2), () {
+              Navigator.of(context).pop(); // fermer la feuille
+            });
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ForgotPasswordScreen()));
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor:
+                isTransparent ? Colors.transparent : Colors.deepPurple,
+            elevation: 0,
+            shadowColor: Colors.transparent,
+            fixedSize: Size(342, 64),
+          ),
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color:
+                  isTransparent ? Colors.deepPurple : const Color(0xFFF4F4F4),
+            ),
+          ),
+        ),
       );
 
   Future showSuccessfulDialog() => showDialog(
