@@ -2,6 +2,8 @@ import 'package:earn_for_all/models/transactions.dart';
 import 'package:earn_for_all/theme/colors.dart';
 import 'package:earn_for_all/utils/fontions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:lottie/lottie.dart';
 
 class TransactionAdmin extends StatelessWidget {
   const TransactionAdmin({super.key});
@@ -25,36 +27,62 @@ class TransactionAdmin extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 24),
                 child: Column(
                   children: [
-                    ListView.builder(
-                      itemCount: transactions
-                          .length, // le nombre d'éléments dans la liste transactions
-                      itemBuilder: (context, index) {
-                        // une fonction qui construit le widget à chaque position de la liste
-                        // On récupère la transaction à la position index
-                        transaction tx = transactions[index];
-                        // On retourne un widget TransactionCard avec les données de la transaction
-                        return TransactionDismissible(
-                            is_valid: tx.isValid,
-                            id: tx.id,
-                            message: "Nouveau " +
-                                tx.type.toString() +
-                                " de " +
-                                tx.utilisateur.toString() +
-                                " pour le compte " +
-                                tx.reseau.toString() +
-                                "|  numero OM/MOMO : (" +
-                                tx.numero_OM_MOMO.toString() +
-                                "|" +
-                                tx.nom_OM_MOMO.toString() +
-                                ")| telephone : " +
-                                tx.tel.toString() +
-                                ((tx.isValid!)
-                                    ? "\nEn attente de validation... (appuyez longuement pour valider)"
-                                    : "\n Deja Valide , glisser pour supprimer"),
-                            autor: tx.montant.toString() + " XAF",
-                            date: "Le " + tx.date.toString());
-                      },
-                    ),
+                    (transactions.length > 0)
+                        ? SingleChildScrollView(
+                            child: SizedBox(
+                              height: 400,
+                              child: ListView.builder(
+                                itemCount: transactions
+                                    .length, // le nombre d'éléments dans la liste transactions
+                                itemBuilder: (context, index) {
+                                  // une fonction qui construit le widget à chaque position de la liste
+                                  // On récupère la transaction à la position index
+                                  transaction tx = transactions[index];
+                                  // On retourne un widget TransactionCard avec les données de la transaction
+                                  return TransactionDismissible(
+                                      is_valid: tx.isValid,
+                                      id: tx.id,
+                                      message: "Nouveau " +
+                                          tx.type.toString() +
+                                          " de " +
+                                          tx.utilisateur.toString() +
+                                          " pour le compte " +
+                                          tx.reseau.toString() +
+                                          "|  numero OM/MOMO : (" +
+                                          tx.numero_OM_MOMO.toString() +
+                                          "|" +
+                                          tx.nom_OM_MOMO.toString() +
+                                          ")| telephone : " +
+                                          tx.tel.toString() +
+                                          (!(tx.isValid ?? false)
+                                              ? "\nEn attente de validation... (appuyez longuement pour valider)"
+                                              : "\n Deja Valide , glisser pour supprimer"),
+                                      autor: tx.montant.toString() + " XAF",
+                                      date: "Le " + tx.date.toString());
+                                },
+                              ),
+                            ),
+                          )
+                        : Center(
+                            child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(18.0),
+                                child: Text(
+                                  "Aucune transaction pour le moment",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: mainFontColor,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                  child: Lottie.asset(
+                                      "assets/lotties/astronot.json")),
+                            ],
+                          )),
                     SizedBox(
                       height: 12,
                     ),
@@ -134,7 +162,7 @@ class MessageContainer extends StatefulWidget {
     required this.message,
     required this.autor,
     required this.date,
-    this.is_valid = false,
+    this.is_valid,
     this.id,
   });
 
@@ -143,12 +171,21 @@ class MessageContainer extends StatefulWidget {
 }
 
 class _MessageContainerState extends State<MessageContainer> {
+  bool is_valid = false;
   @override
   Widget build(BuildContext context) {
+    is_valid = widget.is_valid ?? false;
     return GestureDetector(
-      onLongPress: () async {
-        setState(() async {
-          await Fonctions.validerTransaction(widget.id!);
+      onLongPress: () {
+        // Vérifier si le téléphone supporte la vibration
+
+        // Faire vibrer le téléphone pendant 3 secondes (3000 millisecondes)
+
+        setState(() {
+          widget.is_valid = true;
+          is_valid = true;
+
+          Fonctions.validerTransaction(widget.id ?? "");
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -222,7 +259,7 @@ class _MessageContainerState extends State<MessageContainer> {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    widget.is_valid!
+                    !(is_valid)
                         ? Icon(Icons.timelapse, color: Colors.red)
                         : Icon(
                             Icons.check,
@@ -300,7 +337,7 @@ class TransactionDismissible extends StatelessWidget {
         message: message,
         autor: autor,
         date: date,
-        is_valid: is_valid,
+        is_valid: is_valid ?? false,
         id: id,
       ),
     );

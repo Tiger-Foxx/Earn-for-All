@@ -80,8 +80,8 @@ class Fonctions {
         // Créer un objet transaction à partir des données
         transaction transact = transaction(
           date: data['date'].toDate(),
-          isValid: data['isValid'],
-          montant: data['montant'],
+          isValid: data['is_valid'],
+          montant: data['montant'] + 0.0,
           nom_OM_MOMO: data['nom_OM_MOMO'],
           numero_OM_MOMO: data['numero_OM_MOMO'],
           reseau: data['reseau'],
@@ -146,7 +146,7 @@ class Fonctions {
       DocumentReference docRef =
           FirebaseFirestore.instance.collection('transactions').doc(id);
       // Mettre à jour le champ isValid du document avec la valeur true
-      await docRef.update({'isValid': true});
+      await docRef.update({'is_valid': true});
       // Afficher un message de succès
       print("La transaction a été validée avec succès");
     } catch (e) {

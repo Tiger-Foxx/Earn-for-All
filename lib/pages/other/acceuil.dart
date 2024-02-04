@@ -294,7 +294,7 @@ class _DailyPageState extends State<DailyPage> {
                                   )),
                               IconBadge(
                                 icon: Icon(Icons.payment),
-                                itemCount: 1,
+                                itemCount: transactions.length,
                                 badgeColor: Colors.red,
                                 itemColor: mainFontColor,
                                 hideZero: true,
@@ -330,7 +330,7 @@ class _DailyPageState extends State<DailyPage> {
                         padding: const EdgeInsets.all(8.0),
                         child: SingleChildScrollView(
                           child: SizedBox(
-                            height: 100 + 100 * (transactions.length + 0.0),
+                            height: 300,
                             child: ListView.builder(
                               itemCount: transactions
                                   .length, // le nombre d'éléments dans la liste transactions
