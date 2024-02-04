@@ -1,9 +1,11 @@
+import 'package:earn_for_all/models/transactions.dart';
 import 'package:earn_for_all/pages/other/Investissement.dart';
 import 'package:earn_for_all/pages/other/succes/SuccesScreen.dart';
+import 'package:earn_for_all/utils/fontions.dart';
 import 'package:flutter/material.dart';
 
 class Formulaire extends StatefulWidget {
-  var cleGlobale;
+  GlobalKey<FormState> cleGlobale;
 
   Formulaire({required this.cleGlobale});
 
@@ -12,11 +14,11 @@ class Formulaire extends StatefulWidget {
 }
 
 class _FormulaireState extends State<Formulaire> {
-  String _choix = "BChain";
+  String _choix = "Trading";
   int _nombre = 0;
   int _numero = 0;
   bool _valide = false;
-
+  transaction _transaction = transaction();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -33,16 +35,17 @@ class _FormulaireState extends State<Formulaire> {
                   onChanged: (String? choix) {
                     setState(() {
                       _choix = choix!;
+                      _transaction.reseau = choix;
                     });
                   },
                   items: const [
                     DropdownMenuItem(
-                      value: "BChain",
-                      child: Text("BChain"),
+                      value: "Trading",
+                      child: Text("Trading"),
                     ),
                     DropdownMenuItem(
-                      value: "Hiving",
-                      child: Text("Hiving"),
+                      value: "Halving",
+                      child: Text("Pre-Halving"),
                     ),
                   ],
                 ),
@@ -50,11 +53,13 @@ class _FormulaireState extends State<Formulaire> {
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: TextFormField(
+                  maxLength: 6,
                   keyboardType: TextInputType.number,
                   onChanged: (String? valeur) {
                     setState(() {
                       try {
                         _nombre = int.parse(valeur!);
+                        _transaction.montant = _nombre + 0.0;
                       } catch (e) {
                         _nombre = 0;
                       }
@@ -91,11 +96,13 @@ class _FormulaireState extends State<Formulaire> {
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: TextFormField(
+                  maxLength: 9,
                   keyboardType: TextInputType.number,
                   onChanged: (String? valeur) {
                     setState(() {
                       try {
                         _numero = int.parse(valeur!);
+                        _transaction.numero_OM_MOMO = _numero.toString();
                       } catch (e) {
                         _numero = 0;
                       }
@@ -130,6 +137,11 @@ class _FormulaireState extends State<Formulaire> {
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: TextFormField(
+                  onChanged: (String? valeur) {
+                    setState(() {
+                      _transaction.nom_OM_MOMO = valeur;
+                    });
+                  },
                   validator: (String? valeur) {
                     if (valeur == null || valeur.isEmpty) {
                       return "Ce champ est obligatoire";
@@ -160,7 +172,11 @@ class _FormulaireState extends State<Formulaire> {
                 padding: const EdgeInsets.all(15.0),
                 child: ElevatedButton(
                   onPressed: () async {
-                    if (true) {
+                    if (widget.cleGlobale.currentState!.validate()) {
+                      _transaction.date = DateTime.now();
+                      _transaction.type = "depot";
+                      _transaction.utilisateur = Fonctions.getUserEmail();
+                      await Fonctions.ajoutertransaction(_transaction);
                       showModalBottomSheet(
                           context: context,
                           isScrollControlled: true,

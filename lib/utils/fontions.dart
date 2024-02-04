@@ -29,7 +29,7 @@ class Fonctions {
       // Obtenir les documents de la collection qui correspondent à l'email de l'utilisateur
       QuerySnapshot querySnap = await colRef
           .where('utilisateur', isEqualTo: email)
-          .where("is_valid", isEqualTo: true)
+          .orderBy('date', descending: true)
           .get();
       // Parcourir tous les documents
       for (DocumentSnapshot docSnap in querySnap.docs) {
@@ -37,8 +37,8 @@ class Fonctions {
         Map<String, dynamic> data = docSnap.data() as Map<String, dynamic>;
         // Créer un objet transaction à partir des données
         transaction transact = transaction(
-          date: data['date'],
-          isValid: data['isValid'],
+          date: data['date'].toDate(),
+          isValid: data['is_valid'],
           montant: data['montant'],
           nom_OM_MOMO: data['nom_OM_MOMO'],
           numero_OM_MOMO: data['numero_OM_MOMO'],
@@ -71,14 +71,15 @@ class Fonctions {
       CollectionReference colRef =
           FirebaseFirestore.instance.collection('transactions');
       // Obtenir les documents de la collection qui correspondent à l'email de l'utilisateur
-      QuerySnapshot querySnap = await colRef.get();
+      QuerySnapshot querySnap =
+          await colRef.orderBy('date', descending: true).get();
       // Parcourir tous les documents
       for (DocumentSnapshot docSnap in querySnap.docs) {
         // Extraire les données du document
         Map<String, dynamic> data = docSnap.data() as Map<String, dynamic>;
         // Créer un objet transaction à partir des données
         transaction transact = transaction(
-          date: data['date'],
+          date: data['date'].toDate(),
           isValid: data['isValid'],
           montant: data['montant'],
           nom_OM_MOMO: data['nom_OM_MOMO'],
@@ -95,9 +96,10 @@ class Fonctions {
       }
       // Retourner la liste des transactions
       return transactions;
-    } catch (e) {
+    } on Exception catch (_, e) {
       // Afficher un message d'erreur
-      print("Une erreur s'est produite: $e");
+      print("Une erreur s'est produite ici : $e");
+
       // Retourner une liste vide
       return transactions;
     }
@@ -110,7 +112,9 @@ class Fonctions {
       CollectionReference colRef =
           FirebaseFirestore.instance.collection('transactions');
       // Ajouter l'objet transaction dans la collection
-      await colRef.add(transaction);
+      transaction.tel =
+          (await recupererUtilisateurParEmail(getUserEmail())).tel;
+      await colRef.add(transaction.toJson());
       // Afficher un message de succès
       print("La transaction a été ajoutée avec succès");
     } catch (e) {
@@ -473,22 +477,22 @@ class Fonctions {
         // Calculer le montant de l'augmentation du solde en fonction du paramètre x
         // et du paramètre solde
         double augmentation = 0;
-        if (solde == "bchain") {
+        if (solde == "Trading") {
           // Calculer l'augmentation en fonction du soldeBchain de l'utilisateur
           augmentation = utilisateur.soldeBchain! * x / 100;
-        } else if (solde == "hiving") {
+        } else if (solde == "Halving") {
           // Calculer l'augmentation en fonction du soldeHiving de l'utilisateur
           augmentation = utilisateur.soldeHiving! * x / 100;
         }
         // Mettre à jour le solde de l'utilisateur en fonction du paramètre solde
-        if (solde == "bchain") {
+        if (solde == "Trading") {
           // Augmenter le soldeBchain de l'utilisateur
           await docSnap.reference.update({
             'soldeBchain': FieldValue.increment(augmentation),
             // Stocker la différence dans le champ gainBchain
             'gainBchain': augmentation,
           });
-        } else if (solde == "hiving") {
+        } else if (solde == "Halving") {
           // Augmenter le soldeHiving de l'utilisateur
           await docSnap.reference.update({
             'soldeHiving': FieldValue.increment(augmentation),
@@ -521,7 +525,7 @@ class Fonctions {
           // Calculer le montant du bonus du parrain en fonction du paramètre x
           // et du gain de l'utilisateur
           double bonus = 0;
-          if (solde == "bchain") {
+          if (solde == "Trading") {
             // Calculer le bonus en fonction du gainBchain de l'utilisateur
             bonus = utilisateur.gainBchain! * 9 / 100;
             // Augmenter le soldeBchain du parrain
@@ -533,7 +537,7 @@ class Fonctions {
               // Stocker la différence dans le champ gainParrainage
               'gainParrainage': FieldValue.increment(bonus),
             });
-          } else if (solde == "hiving") {
+          } else if (solde == "Halving") {
             DocumentReference docRef = FirebaseFirestore.instance
                 .collection('utilisateurs')
                 .doc(parrain.email);

@@ -43,7 +43,7 @@ class _InvestPageState extends State<InvestPage> {
                       child: Text(
                         widget.is_valid!
                             ? "Choisissez le reseau ou faire le depot\nLes numeros sont aussi desponibles dans la section INFO"
-                            : "Entrez le montant que vous voulez investir,et choisissez Hiving ou BlockChain",
+                            : "Entrez le montant que vous voulez investir,et choisissez Trading ou Pre-Halving",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontFamily: 'Poppins',

@@ -1,4 +1,5 @@
 import 'package:earn_for_all/models/USER.dart';
+import 'package:earn_for_all/models/transactions.dart';
 import 'package:earn_for_all/pages/authentication/login.dart';
 import 'package:earn_for_all/pages/other/Splash_screen.dart';
 import 'package:earn_for_all/pages/other/home_page.dart';
@@ -13,6 +14,8 @@ import 'package:earn_for_all/theme/colors.dart';
 import 'package:icon_badge/icon_badge.dart';
 import 'package:intl/intl.dart';
 import "dart:math";
+
+import 'package:lottie/lottie.dart';
 
 class DailyPage extends StatefulWidget {
   const DailyPage({super.key});
@@ -39,11 +42,16 @@ class _DailyPageState extends State<DailyPage> {
     String result = DateFormat('MMM d, yyyy').format(today);
     var size = MediaQuery.of(context).size;
 
-    return FutureBuilder<USER>(
-      future: Fonctions.recupererUtilisateurParEmail(Fonctions.getUserEmail()),
+    return FutureBuilder<List<dynamic>>(
+      future: Future.wait([
+        Fonctions.recupererUtilisateurParEmail(Fonctions.getUserEmail()),
+        Fonctions.recuperertransactionsParUtilisateur(Fonctions.getUserEmail()),
+      ]),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          utilisateurCourant = snapshot.data!;
+          utilisateurCourant = snapshot.data![0] as USER;
+          List<transaction> transactions =
+              snapshot.data![1] as List<transaction>;
           return SafeArea(
               child: SingleChildScrollView(
             child: Column(
@@ -143,6 +151,7 @@ class _DailyPageState extends State<DailyPage> {
                                     "Solde total\n" +
                                         (utilisateurCourant.soldeBchain! +
                                                 utilisateurCourant.soldeHiving!)
+                                            .truncate()
                                             .toString() +
                                         ' XAF',
                                     textAlign: TextAlign.center,
@@ -157,8 +166,8 @@ class _DailyPageState extends State<DailyPage> {
                                   Text(
                                     "parrainages\n" +
                                         (utilisateurCourant.nb_parrainage ?? 0)
-                                            .toString() +
-                                        ' XAF',
+                                            .truncate()
+                                            .toString(),
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         fontSize: 12,
@@ -179,7 +188,9 @@ class _DailyPageState extends State<DailyPage> {
                             Column(
                               children: [
                                 Text(
-                                  (utilisateurCourant.soldeBchain!).toString() +
+                                  (utilisateurCourant.soldeBchain!)
+                                          .truncate()
+                                          .toString() +
                                       " XAF",
                                   style: TextStyle(
                                       fontSize: 16,
@@ -190,7 +201,7 @@ class _DailyPageState extends State<DailyPage> {
                                   height: 5,
                                 ),
                                 Text(
-                                  "BlockChain",
+                                  "Trading",
                                   style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w100,
@@ -208,6 +219,7 @@ class _DailyPageState extends State<DailyPage> {
                                 Text(
                                   (utilisateurCourant.gainBchain! +
                                               utilisateurCourant.gainHiving!)
+                                          .truncate()
                                           .toString() +
                                       " XAF",
                                   style: TextStyle(
@@ -235,7 +247,9 @@ class _DailyPageState extends State<DailyPage> {
                             Column(
                               children: [
                                 Text(
-                                  (utilisateurCourant.soldeHiving!).toString() +
+                                  (utilisateurCourant.soldeHiving!)
+                                          .truncate()
+                                          .toString() +
                                       " XAF",
                                   style: TextStyle(
                                       fontSize: 16,
@@ -246,7 +260,7 @@ class _DailyPageState extends State<DailyPage> {
                                   height: 5,
                                 ),
                                 Text(
-                                  "Pre-Hiving",
+                                  "Pre-Halving",
                                   style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w100,
@@ -311,35 +325,59 @@ class _DailyPageState extends State<DailyPage> {
                 SizedBox(
                   height: 5,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      TransactionCard(
-                          type: "Retrait",
-                          date: result,
-                          size: size,
-                          price: "150 XAF"),
-                      TransactionCard(
-                          type: "Investi",
-                          date: result,
-                          size: size,
-                          price: "150 XAF"),
-                      TransactionCard(
-                          type: "Retrait",
-                          date: result,
-                          size: size,
-                          price: "150 XAF"),
-                      SizedBox(
-                        height: 30,
+                (transactions.length > 0)
+                    ? Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SingleChildScrollView(
+                          child: SizedBox(
+                            height: 100 + 100 * (transactions.length + 0.0),
+                            child: ListView.builder(
+                              itemCount: transactions
+                                  .length, // le nombre d'éléments dans la liste transactions
+                              itemBuilder: (context, index) {
+                                // une fonction qui construit le widget à chaque position de la liste
+                                // On récupère la transaction à la position index
+                                transaction tx = transactions[index];
+                                // On retourne un widget TransactionCard avec les données de la transaction
+                                return TransactionCard(
+                                  valid: tx.isValid,
+                                  type: tx.type!,
+                                  date: tx.date!.toString(),
+                                  size: size,
+                                  price: tx.montant!.truncate().toString(),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
                       )
-                    ],
-                  ),
-                )
+                    : Center(
+                        child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(18.0),
+                            child: Text(
+                              "Aucune transaction pour le moment",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: mainFontColor,
+                              ),
+                            ),
+                          ),
+                          Container(
+                              child:
+                                  Lottie.asset("assets/lotties/astronot.json")),
+                        ],
+                      ))
               ],
             ),
           ));
         } else if (snapshot.hasError) {
+          print("Erreur :" + snapshot.error.toString());
+          print("Stacktrace : ");
+          print(snapshot.stackTrace!);
           return SafeArea(
             child: Center(
               child: Text("Une Erreur s'est produite"),
@@ -362,16 +400,18 @@ class _DailyPageState extends State<DailyPage> {
 }
 
 class TransactionCard extends StatefulWidget {
-  String type = 'Envoie';
+  String type = 'depot';
   String date = '';
   String price = '';
+  bool? valid = true;
   var size;
   TransactionCard(
       {super.key,
       required this.type,
       required this.date,
       required this.size,
-      required this.price});
+      required this.price,
+      this.valid});
 
   @override
   State<TransactionCard> createState() => _TransactionCardState();
@@ -380,102 +420,121 @@ class TransactionCard extends StatefulWidget {
 class _TransactionCardState extends State<TransactionCard> {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Container(
-            height: 100,
-            margin: EdgeInsets.only(
-              top: 20,
-              left: 25,
-              right: 25,
-            ),
-            decoration: BoxDecoration(
-                color: white,
-                borderRadius: BorderRadius.circular(25),
-                boxShadow: [
-                  BoxShadow(
-                    color: grey.withOpacity(0.03),
-                    spreadRadius: 10,
-                    blurRadius: 3,
-                    // changes position of shadow
-                  ),
-                ]),
-            child: Padding(
-              padding: const EdgeInsets.only(
-                  top: 10, bottom: 10, right: 20, left: 20),
-              child: Row(
-                children: [
-                  Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: arrowbgColor,
-                      borderRadius: BorderRadius.circular(15),
-                      // shape: BoxShape.circle
+    return Container(
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              height: 100,
+              margin: EdgeInsets.only(
+                top: 20,
+                left: 25,
+                right: 25,
+              ),
+              decoration: BoxDecoration(
+                  color: white,
+                  borderRadius: BorderRadius.circular(25),
+                  boxShadow: [
+                    BoxShadow(
+                      color: grey.withOpacity(0.03),
+                      spreadRadius: 10,
+                      blurRadius: 3,
+                      // changes position of shadow
                     ),
-                    child: Center(
-                        child: widget.type.contains('Investi')
-                            ? Icon(Icons.arrow_upward_rounded)
-                            : Icon(Icons.arrow_downward_rounded)),
-                  ),
-                  SizedBox(
-                    width: 15,
-                  ),
-                  Expanded(
-                    child: Container(
-                      width: (widget.size.width - 90) * 0.85,
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.type,
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: black,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              widget.date,
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  color: black.withOpacity(0.5),
-                                  fontWeight: FontWeight.w400),
-                            ),
-                          ]),
+                  ]),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                    top: 10, bottom: 10, right: 20, left: 20),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: arrowbgColor,
+                        borderRadius: BorderRadius.circular(15),
+                        // shape: BoxShape.circle
+                      ),
+                      child: Center(
+                          child: widget.type.contains('depot')
+                              ? Icon(Icons.arrow_upward_rounded)
+                              : Icon(Icons.arrow_downward_rounded)),
                     ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            widget.price,
-                            style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: widget.type.contains('Investi')
-                                    ? green
-                                    : Colors.red),
-                          )
-                        ],
+                    SizedBox(
+                      width: 15,
+                    ),
+                    Expanded(
+                      child: Container(
+                        width: (widget.size.width - 90) * 0.85,
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                widget.type,
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: black,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                widget.date,
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    color: black.withOpacity(0.5),
+                                    fontWeight: FontWeight.w400),
+                              ),
+                            ]),
                       ),
                     ),
-                  )
-                ],
+                    Expanded(
+                      child: Container(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              widget.price,
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: widget.type.contains('depot')
+                                      ? green
+                                      : Colors.red),
+                            ),
+                            (!(widget.valid ?? true))
+                                ? Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Icon(
+                                      Icons.timelapse,
+                                      color: Colors.red,
+                                      size: 17,
+                                    ),
+                                  )
+                                : Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Icon(
+                                      Icons.check,
+                                      color: Colors.green,
+                                      size: 17,
+                                    ),
+                                  ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        SizedBox(
-          height: 5,
-        ),
-      ],
+          SizedBox(
+            height: 5,
+          ),
+        ],
+      ),
     );
   }
 }

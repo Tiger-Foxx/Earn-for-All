@@ -6,12 +6,12 @@ class USER {
   String? codeParrainage;
   bool? est_parrainee;
   String? email_parrain;
-  double? nb_parrainage = 0;
-  double? soldeBchain = 0;
-  double? soldeHiving = 0;
-  double? gainBchain = 0;
-  double? gainHiving = 0;
-  double? gainParrainage = 0;
+  int? nb_parrainage = 0;
+  double? soldeBchain = 0.0001;
+  double? soldeHiving = 0.0001;
+  double? gainBchain = 0.0001;
+  double? gainHiving = 0.0001;
+  double? gainParrainage = 0.0001;
 
   USER({
     this.uid,

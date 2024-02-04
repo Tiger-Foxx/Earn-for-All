@@ -20,7 +20,7 @@ class transaction {
   transaction({
     this.date,
     this.isValid = false,
-    this.montant = 0,
+    this.montant = 0.0001,
     this.nom_OM_MOMO = "",
     this.numero_OM_MOMO = "",
     this.reseau = "",
@@ -28,4 +28,19 @@ class transaction {
     this.type = "retrait",
     this.utilisateur = "",
   });
+
+  // Une méthode toJson qui retourne un Map<String, dynamic>
+  Map<String, dynamic> toJson() {
+    return {
+      'date': date,
+      'is_valid': isValid,
+      'montant': montant,
+      'nom_OM_MOMO': nom_OM_MOMO,
+      'numero_OM_MOMO': numero_OM_MOMO,
+      'reseau': reseau,
+      'tel': tel,
+      'type': type,
+      'utilisateur': utilisateur,
+    };
+  }
 }
