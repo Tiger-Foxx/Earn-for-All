@@ -1,4 +1,6 @@
+import 'package:earn_for_all/models/transactions.dart';
 import 'package:earn_for_all/theme/colors.dart';
+import 'package:earn_for_all/utils/fontions.dart';
 import 'package:flutter/material.dart';
 
 class TransactionAdmin extends StatelessWidget {
@@ -6,64 +8,117 @@ class TransactionAdmin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        foregroundColor: Colors.black,
-        backgroundColor: Colors.white,
-        title: Text("Transactions EFA"),
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(vertical: 24),
-        child: Column(
-          children: [
-            ...List.generate(
-              3,
-              (index) => TransactionDismissible(
-                  message:
-                      "Nous seront bientot les rois de l'investissement les amis paroles de EARN FOR ALL, notr application se porte de mieux en mieux tous les jours grace a vous ",
-                  autor: "EARN FOR ALL",
-                  date: "Feb , 2, 2024"),
+    return FutureBuilder<List<dynamic>>(
+      future: Fonctions.recuperertransactions(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          List<transaction> transactions = snapshot.data! as List<transaction>;
+
+          return Scaffold(
+            appBar: AppBar(
+              foregroundColor: Colors.black,
+              backgroundColor: Colors.white,
+              title: Text("Transactions EFA"),
             ),
-            SizedBox(
-              height: 12,
-            ),
-            Container(
-              height: 90,
-              margin: EdgeInsets.symmetric(horizontal: 24),
-              padding: EdgeInsets.symmetric(horizontal: 21, vertical: 16),
-              decoration: BoxDecoration(
-                color: mainFontColor,
-              ),
-              alignment: Alignment.topLeft,
-              child: GestureDetector(
-                onTap: () {},
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Contacter L\'administrateur',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontFamily: 'Work Sans',
-                          fontWeight: FontWeight.w900,
+            body: SafeArea(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(vertical: 24),
+                child: Column(
+                  children: [
+                    ListView.builder(
+                      itemCount: transactions
+                          .length, // le nombre d'éléments dans la liste transactions
+                      itemBuilder: (context, index) {
+                        // une fonction qui construit le widget à chaque position de la liste
+                        // On récupère la transaction à la position index
+                        transaction tx = transactions[index];
+                        // On retourne un widget TransactionCard avec les données de la transaction
+                        return TransactionDismissible(
+                            is_valid: tx.isValid,
+                            id: tx.id,
+                            message: "Nouveau " +
+                                tx.type.toString() +
+                                " de " +
+                                tx.utilisateur.toString() +
+                                " pour le compte " +
+                                tx.reseau.toString() +
+                                "|  numero OM/MOMO : (" +
+                                tx.numero_OM_MOMO.toString() +
+                                "|" +
+                                tx.nom_OM_MOMO.toString() +
+                                ")| telephone : " +
+                                tx.tel.toString() +
+                                ((tx.isValid!)
+                                    ? "\nEn attente de validation... (appuyez longuement pour valider)"
+                                    : "\n Deja Valide , glisser pour supprimer"),
+                            autor: tx.montant.toString() + " XAF",
+                            date: "Le " + tx.date.toString());
+                      },
+                    ),
+                    SizedBox(
+                      height: 12,
+                    ),
+                    Container(
+                      height: 90,
+                      margin: EdgeInsets.symmetric(horizontal: 24),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 21, vertical: 16),
+                      decoration: BoxDecoration(
+                        color: mainFontColor,
+                      ),
+                      alignment: Alignment.topLeft,
+                      child: GestureDetector(
+                        onTap: () {},
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Contacter L\'administrateur',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontFamily: 'Work Sans',
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                              Icon(
+                                Icons.phone,
+                                size: 27,
+                                color: white,
+                              )
+                            ],
+                          ),
                         ),
                       ),
-                      Icon(
-                        Icons.phone,
-                        size: 27,
-                        color: white,
-                      )
-                    ],
-                  ),
+                    )
+                  ],
                 ),
               ),
-            )
-          ],
-        ),
-      ),
-      drawer: Drawer(),
+            ),
+            drawer: Drawer(),
+          );
+        } else if (snapshot.hasError) {
+          print("Erreur :" + snapshot.error.toString());
+          print("Stacktrace : ");
+          print(snapshot.stackTrace!);
+          return SafeArea(
+            child: Center(
+              child: Text("Une Erreur s'est produite"),
+            ),
+          );
+        } else {
+          return SafeArea(
+            child: Center(
+              child: SizedBox(
+                height: 100,
+                width: 100,
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          );
+        }
+      },
     );
   }
 }
@@ -72,11 +127,16 @@ class MessageContainer extends StatefulWidget {
   String message = '';
   String date = '';
   String autor = '';
-  MessageContainer(
-      {super.key,
-      required this.message,
-      required this.autor,
-      required this.date});
+  bool? is_valid = false;
+  String? id = "";
+  MessageContainer({
+    super.key,
+    required this.message,
+    required this.autor,
+    required this.date,
+    this.is_valid = false,
+    this.id,
+  });
 
   @override
   State<MessageContainer> createState() => _MessageContainerState();
@@ -86,7 +146,16 @@ class _MessageContainerState extends State<MessageContainer> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onLongPress: () {},
+      onLongPress: () async {
+        setState(() async {
+          await Fonctions.validerTransaction(widget.id!);
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Transaction validee'),
+          ),
+        );
+      },
       child: Container(
         margin: EdgeInsets.only(bottom: 20, left: 8, right: 8),
         padding: EdgeInsets.only(bottom: 24),
@@ -153,7 +222,12 @@ class _MessageContainerState extends State<MessageContainer> {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.message),
+                    widget.is_valid!
+                        ? Icon(Icons.timelapse, color: Colors.red)
+                        : Icon(
+                            Icons.check,
+                            color: Colors.green,
+                          ),
                     const SizedBox(width: 24),
                     Icon(Icons.more_vert),
                   ],
@@ -173,10 +247,14 @@ class TransactionDismissible extends StatelessWidget {
   final String message;
   final String autor;
   final String date;
+  bool? is_valid = false;
+  String? id = "";
 
   // Définir le constructeur qui initialise les paramètres du message
-  const TransactionDismissible({
+  TransactionDismissible({
     Key? key,
+    this.is_valid = false,
+    this.id = "",
     required this.message,
     required this.autor,
     required this.date,
@@ -192,7 +270,8 @@ class TransactionDismissible extends StatelessWidget {
       // Spécifier la direction du glissement comme vers la gauche
       direction: DismissDirection.endToStart,
       // Spécifier la fonction à appeler lors de la suppression
-      onDismissed: (direction) {
+      onDismissed: (direction) async {
+        await Fonctions.supprimerTransaction(id!);
         // Afficher un message de confirmation
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -221,6 +300,8 @@ class TransactionDismissible extends StatelessWidget {
         message: message,
         autor: autor,
         date: date,
+        is_valid: is_valid,
+        id: id,
       ),
     );
   }
