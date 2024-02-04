@@ -1,4 +1,5 @@
 import 'package:earn_for_all/models/USER.dart';
+import 'package:earn_for_all/models/messages_efa.dart';
 import 'package:earn_for_all/models/transactions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -320,7 +321,7 @@ class Fonctions {
   }
 
 // Une fonction qui permet de mettre un utilisateur comme etant deja parrainee
-  Future<void> incrementerNbParrainage(String email) async {
+  static Future<void> incrementerNbParrainage(String email) async {
     try {
       // Créer une référence au document correspondant à l'email
       DocumentReference docRef =
@@ -336,7 +337,7 @@ class Fonctions {
   }
 
 // Une fonction qui permet d'incrémenter le nombre de parrainage d'un utilisateur
-  Future<void> Metparrainee(String email) async {
+  static Future<void> Metparrainee(String email) async {
     try {
       // Créer une référence au document correspondant à l'email
       DocumentReference docRef =
@@ -352,7 +353,8 @@ class Fonctions {
   }
 
 // Une fonction qui permet de mettre un email comme email de parrain à un utilisateur
-  Future<void> mettreEmailParrain(String email, String emailParrain) async {
+  static Future<void> mettreEmailParrain(
+      String email, String emailParrain) async {
     try {
       // Créer une référence au document correspondant à l'email
       DocumentReference docRef =
@@ -368,7 +370,7 @@ class Fonctions {
   }
 
 // Une fonction qui permet de récupérer un utilisateur dont le code de parrainage est donné en paramètre
-  Future<USER> recupererUtilisateurParCodeParrainage(
+  static Future<USER> recupererUtilisateurParCodeParrainage(
       String codeParrainage) async {
     // Créer un objet USER vide
     USER utilisateur = USER();
@@ -412,7 +414,7 @@ class Fonctions {
   }
 
 // Une fonction qui permet d'attribuer un parrain à un utilisateur dont l'email est donné en paramètre et le code de parrainage du parrain
-  Future<void> parrainer(String email, String codeParrainage) async {
+  static Future<void> parrainer(String email, String codeParrainage) async {
     try {
       // Récupérer l'utilisateur qui correspond à l'email
       USER utilisateur = await recupererUtilisateurParEmail(email);
@@ -446,7 +448,7 @@ class Fonctions {
 
 // Une fonction qui prend en paramètre un nombre qui représente un pourcentage x
 // et un paramètre qui indique le solde à augmenter (bchain ou hiving)
-  Future<void> distribuer(double x, String solde) async {
+  static Future<void> distribuer(double x, String solde) async {
     try {
       // Créer une référence à la collection utilisateurs
       CollectionReference colRef =
@@ -548,6 +550,56 @@ class Fonctions {
       }
       // Afficher un message de succès
       print("La distribution a été effectuée avec succès");
+    } catch (e) {
+      // Afficher un message d'erreur
+      print("Une erreur s'est produite: $e");
+    }
+  }
+
+// Une fonction qui permet de récupérer tous les messages (avec ID) de la collection
+  Future<List<MessagesEFA>> recupererTousLesMessages() async {
+    // Créer une liste vide pour stocker les messages
+    List<MessagesEFA> messages = [];
+    try {
+      // Créer une référence à la collection messages
+      CollectionReference colRef =
+          FirebaseFirestore.instance.collection('messages');
+      // Obtenir tous les documents de la collection
+      QuerySnapshot querySnap = await colRef.get();
+      // Parcourir tous les documents
+      for (DocumentSnapshot docSnap in querySnap.docs) {
+        // Extraire les données du document
+        Map<String, dynamic> data = docSnap.data() as Map<String, dynamic>;
+        // Créer un objet MessagesEFA à partir des données
+        MessagesEFA message = MessagesEFA(
+          id: docSnap.id, // Obtenir l'ID du document
+          texte: data['texte'],
+
+          date: data['date'],
+        );
+        // Ajouter l'objet MessagesEFA à la liste
+        messages.add(message);
+      }
+      // Retourner la liste des messages
+      return messages;
+    } catch (e) {
+      // Afficher un message d'erreur
+      print("Une erreur s'est produite: $e");
+      // Retourner une liste vide
+      return messages;
+    }
+  }
+
+// Une fonction qui permet de supprimer un message dont on connait l'ID
+  Future<void> supprimerMessage(String id) async {
+    try {
+      // Créer une référence au document correspondant à l'ID
+      DocumentReference docRef =
+          FirebaseFirestore.instance.collection('messages').doc(id);
+      // Supprimer le document
+      await docRef.delete();
+      // Afficher un message de succès
+      print("Le message a été supprimé avec succès");
     } catch (e) {
       // Afficher un message d'erreur
       print("Une erreur s'est produite: $e");
