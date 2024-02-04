@@ -163,7 +163,7 @@ class Fonctions {
       Map<String, dynamic> data = docSnap.data() as Map<String, dynamic>;
       // Créer un objet USER à partir des données
       USER utilisateur = USER(
-        uid: data['uid'],
+        uid: docSnap.id,
         email: data['email'],
         codeParrainage: data['codeParrainage'],
         email_parrain: data['email_parrain'],
@@ -201,7 +201,7 @@ class Fonctions {
         Map<String, dynamic> data = docSnap.data() as Map<String, dynamic>;
         // Créer un objet USER à partir des données
         USER utilisateur = USER(
-          uid: data['uid'],
+          uid: docSnap.id,
           email: data['email'],
           codeParrainage: data['codeParrainage'],
           email_parrain: data['email_parrain'],
@@ -319,7 +319,7 @@ class Fonctions {
     }
   }
 
-// Une fonction qui permet d'incrémenter le nombre de parrainage d'un utilisateur
+// Une fonction qui permet de mettre un utilisateur comme etant deja parrainee
   Future<void> incrementerNbParrainage(String email) async {
     try {
       // Créer une référence au document correspondant à l'email
@@ -329,6 +329,22 @@ class Fonctions {
       await docRef.update({'nb_parrainage': FieldValue.increment(1)});
       // Afficher un message de succès
       print("Le nombre de parrainage a été incrémenté avec succès");
+    } catch (e) {
+      // Afficher un message d'erreur
+      print("Une erreur s'est produite: $e");
+    }
+  }
+
+// Une fonction qui permet d'incrémenter le nombre de parrainage d'un utilisateur
+  Future<void> Metparrainee(String email) async {
+    try {
+      // Créer une référence au document correspondant à l'email
+      DocumentReference docRef =
+          FirebaseFirestore.instance.collection('utilisateurs').doc(email);
+      // Incrémenter le champ nb_parrainage du document avec la valeur 1
+      await docRef.update({'est_parrainee': true});
+      // Afficher un message de succès
+      print("L'utilisateur a ete mis comme parrainee");
     } catch (e) {
       // Afficher un message d'erreur
       print("Une erreur s'est produite: $e");
@@ -372,7 +388,6 @@ class Fonctions {
             querySnap.docs[0].data() as Map<String, dynamic>;
         // Créer un objet USER à partir des données
         utilisateur = USER(
-          uid: data['uid'],
           email: data['email'],
           codeParrainage: data['codeParrainage'],
           email_parrain: data['email_parrain'],
@@ -412,6 +427,7 @@ class Fonctions {
           await mettreEmailParrain(email, parrain.email!);
           // Incrémenter le nombre de parrainage du parrain
           await incrementerNbParrainage(parrain.email!);
+          await Metparrainee(email);
           // Afficher un message de succès
           print("Le parrainage a été effectué avec succès");
         } else {
@@ -422,6 +438,116 @@ class Fonctions {
         // Si l'utilisateur est déjà parrainé, afficher un message d'erreur
         print("L'utilisateur est déjà parrainé");
       }
+    } catch (e) {
+      // Afficher un message d'erreur
+      print("Une erreur s'est produite: $e");
+    }
+  }
+
+// Une fonction qui prend en paramètre un nombre qui représente un pourcentage x
+// et un paramètre qui indique le solde à augmenter (bchain ou hiving)
+  Future<void> distribuer(double x, String solde) async {
+    try {
+      // Créer une référence à la collection utilisateurs
+      CollectionReference colRef =
+          FirebaseFirestore.instance.collection('utilisateurs');
+      // Obtenir tous les documents de la collection
+      QuerySnapshot querySnap = await colRef.get();
+      // Parcourir tous les documents
+      for (DocumentSnapshot docSnap in querySnap.docs) {
+        // Extraire les données du document
+        Map<String, dynamic> data = docSnap.data() as Map<String, dynamic>;
+        // Créer un objet USER à partir des données
+        USER utilisateur = USER(
+          email: data['email'],
+          codeParrainage: data['codeParrainage'],
+          email_parrain: data['email_parrain'],
+          est_parrainee: data['est_parrainee'],
+          nb_parrainage: data['nb_parrainage'],
+          soldeBchain: data['soldeBchain'],
+          soldeHiving: data['soldeHiving'],
+          tel: data['tel'],
+        );
+        // Calculer le montant de l'augmentation du solde en fonction du paramètre x
+        // et du paramètre solde
+        double augmentation = 0;
+        if (solde == "bchain") {
+          // Calculer l'augmentation en fonction du soldeBchain de l'utilisateur
+          augmentation = utilisateur.soldeBchain! * x / 100;
+        } else if (solde == "hiving") {
+          // Calculer l'augmentation en fonction du soldeHiving de l'utilisateur
+          augmentation = utilisateur.soldeHiving! * x / 100;
+        }
+        // Mettre à jour le solde de l'utilisateur en fonction du paramètre solde
+        if (solde == "bchain") {
+          // Augmenter le soldeBchain de l'utilisateur
+          await docSnap.reference.update({
+            'soldeBchain': FieldValue.increment(augmentation),
+            // Stocker la différence dans le champ gainBchain
+            'gainBchain': augmentation,
+          });
+        } else if (solde == "hiving") {
+          // Augmenter le soldeHiving de l'utilisateur
+          await docSnap.reference.update({
+            'soldeHiving': FieldValue.increment(augmentation),
+            // Stocker la différence dans le champ gainHiving
+            'gainHiving': augmentation,
+          });
+        }
+      }
+      // Reparcourir tous les documents
+      for (DocumentSnapshot docSnap in querySnap.docs) {
+        // Extraire les données du document
+        Map<String, dynamic> data = docSnap.data() as Map<String, dynamic>;
+        // Créer un objet USER à partir des données
+        USER utilisateur = USER(
+          uid: data['uid'],
+          email: data['email'],
+          codeParrainage: data['codeParrainage'],
+          email_parrain: data['email_parrain'],
+          est_parrainee: data['est_parrainee'],
+          nb_parrainage: data['nb_parrainage'],
+          soldeBchain: data['soldeBchain'],
+          soldeHiving: data['soldeHiving'],
+          tel: data['tel'],
+        );
+        // Vérifier si l'utilisateur est parrainé
+        if (utilisateur.est_parrainee == true) {
+          // Récupérer le parrain de l'utilisateur
+          USER parrain =
+              await recupererUtilisateurParEmail(utilisateur.email_parrain!);
+          // Calculer le montant du bonus du parrain en fonction du paramètre x
+          // et du gain de l'utilisateur
+          double bonus = 0;
+          if (solde == "bchain") {
+            // Calculer le bonus en fonction du gainBchain de l'utilisateur
+            bonus = utilisateur.gainBchain! * 9 / 100;
+            // Augmenter le soldeBchain du parrain
+            DocumentReference docRef = FirebaseFirestore.instance
+                .collection('utilisateurs')
+                .doc(parrain.email);
+            await docRef.update({
+              'soldeBchain': FieldValue.increment(bonus),
+              // Stocker la différence dans le champ gainParrainage
+              'gainParrainage': FieldValue.increment(bonus),
+            });
+          } else if (solde == "hiving") {
+            DocumentReference docRef = FirebaseFirestore.instance
+                .collection('utilisateurs')
+                .doc(parrain.email);
+            // Calculer le bonus en fonction du gainHiving de l'utilisateur
+            bonus = utilisateur.gainHiving! * 9 / 100;
+            // Augmenter le soldeHiving du parrain
+            await docRef.update({
+              'soldeHiving': FieldValue.increment(bonus),
+              // Stocker la différence dans le champ gainParrainage
+              'gainParrainage': FieldValue.increment(bonus),
+            });
+          }
+        }
+      }
+      // Afficher un message de succès
+      print("La distribution a été effectuée avec succès");
     } catch (e) {
       // Afficher un message d'erreur
       print("Une erreur s'est produite: $e");

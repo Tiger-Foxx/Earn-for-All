@@ -1,106 +1,69 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-// Une fonction qui permet d'incrémenter le nombre de parrainage d'un utilisateur
-Future<void> incrementerNbParrainage(String email) async {
-  try {
-    // Créer une référence au document correspondant à l'email
-    DocumentReference docRef =
-        FirebaseFirestore.instance.collection('utilisateurs').doc(email);
-    // Incrémenter le champ nb_parrainage du document avec la valeur 1
-    await docRef.update({'nb_parrainage': FieldValue.increment(1)});
-    // Afficher un message de succès
-    print("Le nombre de parrainage a été incrémenté avec succès");
-  } catch (e) {
-    // Afficher un message d'erreur
-    print("Une erreur s'est produite: $e");
-  }
+// Une classe MessagesEFA avec tous les attributs non obligatoires
+class MessagesEFA {
+  // Les champs de la classe
+  String? id; // L'ID du message, par défaut vide
+  String? contenu; // Le contenu du message, par défaut vide
+  String? expediteur; // L'email de l'expéditeur du message, par défaut vide
+  String? destinataire; // L'email du destinataire du message, par défaut vide
+  String? date; // La date du message, par défaut la date et l'heure actuelles
+
+  // Le constructeur de la classe, avec des paramètres nommés et des valeurs par défaut
+  MessagesEFA({
+    this.id = "",
+    this.contenu = "",
+    this.expediteur = "",
+    this.destinataire = "",
+    this.date = DateTime.now().toString(),
+  });
 }
 
-// Une fonction qui permet de mettre un email comme email de parrain à un utilisateur
-Future<void> mettreEmailParrain(String email, String emailParrain) async {
+// Une fonction qui permet de récupérer tous les messages (avec ID) de la collection
+Future<List<MessagesEFA>> recupererTousLesMessages() async {
+  // Créer une liste vide pour stocker les messages
+  List<MessagesEFA> messages = [];
   try {
-    // Créer une référence au document correspondant à l'email
-    DocumentReference docRef =
-        FirebaseFirestore.instance.collection('utilisateurs').doc(email);
-    // Mettre à jour le champ email_parrain du document avec la valeur emailParrain
-    await docRef.update({'email_parrain': emailParrain});
-    // Afficher un message de succès
-    print("L'email de parrain a été mis à jour avec succès");
-  } catch (e) {
-    // Afficher un message d'erreur
-    print("Une erreur s'est produite: $e");
-  }
-}
-
-// Une fonction qui permet de récupérer un utilisateur dont le code de parrainage est donné en paramètre
-Future<USER> recupererUtilisateurParCodeParrainage(
-    String codeParrainage) async {
-  // Créer un objet USER vide
-  USER utilisateur = USER();
-  try {
-    // Créer une référence à la collection utilisateurs
+    // Créer une référence à la collection messages
     CollectionReference colRef =
-        FirebaseFirestore.instance.collection('utilisateurs');
-    // Obtenir le document de la collection qui correspond au code de parrainage
-    QuerySnapshot querySnap = await colRef
-        .where('codeParrainage', isEqualTo: codeParrainage)
-        .limit(1)
-        .get();
-    // Vérifier si le document existe
-    if (querySnap.size > 0) {
+        FirebaseFirestore.instance.collection('messages');
+    // Obtenir tous les documents de la collection
+    QuerySnapshot querySnap = await colRef.get();
+    // Parcourir tous les documents
+    for (DocumentSnapshot docSnap in querySnap.docs) {
       // Extraire les données du document
-      Map<String, dynamic> data =
-          querySnap.docs[0].data() as Map<String, dynamic>;
-      // Créer un objet USER à partir des données
-      utilisateur = USER(
-        uid: data['uid'],
-        email: data['email'],
-        codeParrainage: data['codeParrainage'],
-        email_parrain: data['email_parrain'],
-        est_parrainee: data['est_parrainee'],
-        nb_parrainage: data['nb_parrainage'],
-        soldeBchain: data['soldeBchain'],
-        soldeHiving: data['soldeHiving'],
-        tel: data['tel'],
+      Map<String, dynamic> data = docSnap.data() as Map<String, dynamic>;
+      // Créer un objet MessagesEFA à partir des données
+      MessagesEFA message = MessagesEFA(
+        id: docSnap.id, // Obtenir l'ID du document
+        contenu: data['contenu'],
+        expediteur: data['expediteur'],
+        destinataire: data['destinataire'],
+        date: data['date'],
       );
-    } else {
-      // Si le document n'existe pas, afficher un message d'erreur
-      print("Le code de parrainage n'est pas valide");
+      // Ajouter l'objet MessagesEFA à la liste
+      messages.add(message);
     }
-    // Retourner l'objet USER
-    return utilisateur;
+    // Retourner la liste des messages
+    return messages;
   } catch (e) {
     // Afficher un message d'erreur
     print("Une erreur s'est produite: $e");
-    // Retourner un objet USER vide
-    return utilisateur;
+    // Retourner une liste vide
+    return messages;
   }
 }
 
-// Une fonction qui permet d'attribuer un parrain à un utilisateur dont l'email est donné en paramètre et le code de parrainage du parrain
-Future<void> parrainer(String email, String codeParrainage) async {
+// Une fonction qui permet de supprimer un message dont on connait l'ID
+Future<void> supprimerMessage(String id) async {
   try {
-    // Récupérer l'utilisateur qui correspond à l'email
-    USER utilisateur = await recupererUtilisateurParEmail(email);
-    // Vérifier si l'utilisateur n'est pas déjà parrainé
-    if (utilisateur.est_parrainee == false) {
-      // Récupérer l'utilisateur qui correspond au code de parrainage
-      USER parrain = await recupererUtilisateurParCodeParrainage(codeParrainage);
-      // Vérifier si le parrain existe
-      if (parrain.email != null && parrain.email != "") {
-        // Mettre l'email du parrain comme email de parrain à l'utilisateur
-        await mettreEmailParrain(email, parrain.email!);
-        // Incrémenter le nombre de parrainage du parrain
-        await incrementerNbParrainage(parrain.email!);
-        // Afficher un message de succès
-        print("Le parrainage a été effectué avec succès");
-      } else {
-        // Si le parrain n'existe pas, afficher un message d'erreur
-        print("Le code de parrainage n'est pas valide");
-      }
-    } else {
-      // Si l'utilisateur est déjà parrainé, afficher un message d'erreur
-      print("L'utilisateur est déjà parrainé");
-    }
+    // Créer une référence au document correspondant à l'ID
+    DocumentReference docRef =
+        FirebaseFirestore.instance.collection('messages').doc(id);
+    // Supprimer le document
+    await docRef.delete();
+    // Afficher un message de succès
+    print("Le message a été supprimé avec succès");
   } catch (e) {
     // Afficher un message d'erreur
     print("Une erreur s'est produite: $e");
