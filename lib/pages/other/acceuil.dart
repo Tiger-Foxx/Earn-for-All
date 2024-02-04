@@ -1,7 +1,9 @@
+import 'package:earn_for_all/models/USER.dart';
 import 'package:earn_for_all/pages/authentication/login.dart';
 import 'package:earn_for_all/pages/other/Splash_screen.dart';
 import 'package:earn_for_all/pages/other/home_page.dart';
 import 'package:earn_for_all/services/Authentification.dart';
+import 'package:earn_for_all/utils/fontions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:earn_for_all/theme/colors.dart';
 import 'package:icon_badge/icon_badge.dart';
 import 'package:intl/intl.dart';
+import "dart:math";
 
 class DailyPage extends StatefulWidget {
   const DailyPage({super.key});
@@ -28,278 +31,333 @@ class _DailyPageState extends State<DailyPage> {
     return user.email.toString();
   }
 
+  USER utilisateurCourant = USER();
+
   @override
   Widget build(BuildContext context) {
     DateTime today = DateTime.now();
     String result = DateFormat('MMM d, yyyy').format(today);
     var size = MediaQuery.of(context).size;
-    return SafeArea(
-        child: SingleChildScrollView(
-      child: Column(
-        children: [
-          Container(
-            margin: EdgeInsets.only(top: 25, left: 25, right: 25, bottom: 10),
-            decoration: BoxDecoration(
-                color: white,
-                borderRadius: BorderRadius.circular(25),
-                boxShadow: [
-                  BoxShadow(
-                    color: grey.withOpacity(0.03),
-                    spreadRadius: 10,
-                    blurRadius: 3,
-                    // changes position of shadow
-                  ),
-                ]),
-            child: Padding(
-              padding: const EdgeInsets.only(
-                  top: 20, bottom: 25, right: 20, left: 20),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () =>
-                            HomePage.scaffoldKey.currentState?.openDrawer(),
-                        child: Icon(
-                          Icons.menu,
-                          size: 37,
-                          color: mainFontColor,
+
+    return FutureBuilder<USER>(
+      future: Fonctions.recupererUtilisateurParEmail(Fonctions.getUserEmail()),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          utilisateurCourant = snapshot.data!;
+          return SafeArea(
+              child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  margin:
+                      EdgeInsets.only(top: 25, left: 25, right: 25, bottom: 10),
+                  decoration: BoxDecoration(
+                      color: white,
+                      borderRadius: BorderRadius.circular(25),
+                      boxShadow: [
+                        BoxShadow(
+                          color: grey.withOpacity(0.03),
+                          spreadRadius: 10,
+                          blurRadius: 3,
+                          // changes position of shadow
                         ),
-                      ),
-                      GestureDetector(
-                        onTap: () async {
-                          showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              isDismissible: false,
-                              builder: (BuildContext context) {
-                                return const Splash_screen(); // votre page de chargement
-                              });
-                          await Future.delayed(const Duration(seconds: 2), () {
-                            Navigator.of(context).pop(); // fermer la feuille
-                          });
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => Login()));
-                          Authentification().signOut();
-                        },
-                        child: Icon(
-                          Icons.logout,
-                          size: 37,
-                          color: mainFontColor,
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  Column(
-                    children: [
-                      Container(
-                        width: 70,
-                        height: 70,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                                image: NetworkImage(
-                                    "https://images.unsplash.com/photo-1531256456869-ce942a665e80?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MTI4fHxwcm9maWxlfGVufDB8fDB8&ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60"),
-                                fit: BoxFit.cover)),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        width: (size.width - 40) * 0.6,
-                        child: Column(
+                      ]),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        top: 20, bottom: 25, right: 20, left: 20),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              getUserEmail() ?? "",
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: mainFontColor),
+                            GestureDetector(
+                              onTap: () => HomePage.scaffoldKey.currentState
+                                  ?.openDrawer(),
+                              child: Icon(
+                                Icons.menu,
+                                size: 37,
+                                color: mainFontColor,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () async {
+                                showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    isDismissible: false,
+                                    builder: (BuildContext context) {
+                                      return const Splash_screen(); // votre page de chargement
+                                    });
+                                await Future.delayed(const Duration(seconds: 2),
+                                    () {
+                                  Navigator.of(context)
+                                      .pop(); // fermer la feuille
+                                });
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Login()));
+                                Authentification().signOut();
+                              },
+                              child: Icon(
+                                Icons.logout,
+                                size: 37,
+                                color: mainFontColor,
+                              ),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Column(
+                          children: [
+                            Container(
+                              width: 70,
+                              height: 70,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                      image:
+                                          AssetImage('assets/images/USER.jpg'),
+                                      fit: BoxFit.cover)),
                             ),
                             SizedBox(
                               height: 10,
                             ),
-                            Text(
-                              "Solde courant\n235647 XAF",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: black),
-                            ),
+                            Container(
+                              width: (size.width - 40) * 0.6,
+                              child: Column(
+                                children: [
+                                  Text(
+                                    getUserEmail() ?? "",
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: mainFontColor),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "Solde total\n" +
+                                        (utilisateurCourant.soldeBchain! +
+                                                utilisateurCourant.soldeHiving!)
+                                            .toString() +
+                                        ' XAF',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        color: black),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "parrainages\n" +
+                                        (utilisateurCourant.nb_parrainage ?? 0)
+                                            .toString() +
+                                        ' XAF',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        color: black),
+                                  ),
+                                ],
+                              ),
+                            )
                           ],
                         ),
-                      )
-                    ],
+                        SizedBox(
+                          height: 50,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Column(
+                              children: [
+                                Text(
+                                  (utilisateurCourant.soldeBchain!).toString() +
+                                      " XAF",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: mainFontColor),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  "BlockChain",
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w100,
+                                      color: black),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              width: 0.5,
+                              height: 40,
+                              color: black.withOpacity(0.3),
+                            ),
+                            Column(
+                              children: [
+                                Text(
+                                  (utilisateurCourant.gainBchain! +
+                                              utilisateurCourant.gainHiving!)
+                                          .toString() +
+                                      " XAF",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: mainFontColor),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  "Gains",
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w100,
+                                      color: black),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              width: 0.5,
+                              height: 40,
+                              color: black.withOpacity(0.3),
+                            ),
+                            Column(
+                              children: [
+                                Text(
+                                  (utilisateurCourant.soldeHiving!).toString() +
+                                      " XAF",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: mainFontColor),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  "Pre-Hiving",
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w100,
+                                      color: black),
+                                ),
+                              ],
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
-                  SizedBox(
-                    height: 50,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 25, right: 25),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Column(
                         children: [
-                          Text(
-                            "8900 XAF",
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: mainFontColor),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            "BlockChain",
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w100,
-                                color: black),
-                          ),
+                          Row(
+                            children: [
+                              Text("Récents",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: mainFontColor,
+                                  )),
+                              IconBadge(
+                                icon: Icon(Icons.payment),
+                                itemCount: 1,
+                                badgeColor: Colors.red,
+                                itemColor: mainFontColor,
+                                hideZero: true,
+                                top: -1,
+                                onTap: () {
+                                  print('test');
+                                },
+                              ),
+                            ],
+                          )
                         ],
                       ),
-                      Container(
-                        width: 0.5,
-                        height: 40,
-                        color: black.withOpacity(0.3),
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            "5500 XAF",
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: mainFontColor),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            "Gains",
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w100,
-                                color: black),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        width: 0.5,
-                        height: 40,
-                        color: black.withOpacity(0.3),
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            "890 XAF",
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: mainFontColor),
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            "Hiving",
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w100,
-                                color: black),
-                          ),
-                        ],
-                      ),
+                      // Text("Overview",
+                      //     style: TextStyle(
+                      //       fontWeight: FontWeight.bold,
+                      //       fontSize: 20,
+                      //       color: mainFontColor,
+                      //     )),
+                      Text(result,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            color: mainFontColor,
+                          )),
                     ],
-                  )
-                ],
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 25, right: 25),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  children: [
-                    Row(
-                      children: [
-                        Text("Récents",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: mainFontColor,
-                            )),
-                        IconBadge(
-                          icon: Icon(Icons.payment),
-                          itemCount: 1,
-                          badgeColor: Colors.red,
-                          itemColor: mainFontColor,
-                          hideZero: true,
-                          top: -1,
-                          onTap: () {
-                            print('test');
-                          },
-                        ),
-                      ],
-                    )
-                  ],
+                  ),
                 ),
-                // Text("Overview",
-                //     style: TextStyle(
-                //       fontWeight: FontWeight.bold,
-                //       fontSize: 20,
-                //       color: mainFontColor,
-                //     )),
-                Text(result,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
-                      color: mainFontColor,
-                    )),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                TransactionCard(
-                    type: "Retrait",
-                    date: result,
-                    size: size,
-                    price: "150 XAF"),
-                TransactionCard(
-                    type: "Investi",
-                    date: result,
-                    size: size,
-                    price: "150 XAF"),
-                TransactionCard(
-                    type: "Retrait",
-                    date: result,
-                    size: size,
-                    price: "150 XAF"),
                 SizedBox(
-                  height: 30,
+                  height: 5,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      TransactionCard(
+                          type: "Retrait",
+                          date: result,
+                          size: size,
+                          price: "150 XAF"),
+                      TransactionCard(
+                          type: "Investi",
+                          date: result,
+                          size: size,
+                          price: "150 XAF"),
+                      TransactionCard(
+                          type: "Retrait",
+                          date: result,
+                          size: size,
+                          price: "150 XAF"),
+                      SizedBox(
+                        height: 30,
+                      )
+                    ],
+                  ),
                 )
               ],
             ),
-          )
-        ],
-      ),
-    ));
+          ));
+        } else if (snapshot.hasError) {
+          return SafeArea(
+            child: Center(
+              child: Text("Une Erreur s'est produite"),
+            ),
+          );
+        } else {
+          return SafeArea(
+            child: Center(
+              child: SizedBox(
+                height: 100,
+                width: 100,
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          );
+        }
+      },
+    );
   }
 }
 

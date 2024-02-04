@@ -6,6 +6,7 @@ import 'package:earn_for_all/pages/authentication/login.dart';
 import 'package:earn_for_all/pages/authentication/register.dart';
 import 'package:earn_for_all/services/Authentification.dart';
 import 'package:earn_for_all/theme/colors.dart';
+import 'package:earn_for_all/utils/fontions.dart';
 import 'package:earn_for_all/widgets/drawer_presentation.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
@@ -50,6 +51,7 @@ class _RegisterState extends State<Register>
   final _formKey = GlobalKey<FormState>();
   // Créer un modèle d'utilisateur avec des attributs email et mot de passe
   USER _user = USER();
+  String tel = "0";
   Authentification inscripteur = Authentification();
   bool _isLoading = false;
   @override
@@ -112,47 +114,58 @@ class _RegisterState extends State<Register>
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(13.0),
-                    child: _button2(text: 'Inscription avec Google'),
-                  ),
-                  _textField(
-                    hintText: 'Votre email',
-                    prefixIcon:
-                        const Icon(Icons.mail, color: Color(0xFFA8A8A8)),
-                  ),
-                  SizedBox(height: 14),
-                  _textField2(
-                    hintText: 'Votre mot de passe',
-                    prefixIcon:
-                        const Icon(Icons.lock, color: Color(0xFFA8A8A8)),
-                  ),
-                  SizedBox(height: 14),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _textField2(
-                          hintText: 'Validez votre mot de passe',
-                          prefixIcon: const Icon(Icons.vpn_key,
-                              color: Color(0xFFA8A8A8)),
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(13.0),
+                          child: _button2(text: 'Inscription avec Google'),
                         ),
-                      ),
-                      SizedBox(width: 10),
-                      Container(
-                        width: 74,
-                        height: 65,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: const Color(0xFFD0D0D0),
+                        if (_isLoading)
+                          SizedBox(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: CircularProgressIndicator(),
+                            ),
+                            width: 70,
+                            height: 70,
                           ),
+                        _textField(
+                          hintText: 'Votre email',
+                          prefixIcon:
+                              const Icon(Icons.mail, color: Color(0xFFA8A8A8)),
                         ),
-                        child: Icon(Icons.remove_red_eye),
-                      ),
-                    ],
+                        SizedBox(height: 14),
+                        _textField4(
+                          hintText: 'Votre numero de telephone',
+                          prefixIcon:
+                              const Icon(Icons.phone, color: Color(0xFFA8A8A8)),
+                        ),
+                        SizedBox(height: 14),
+                        _textField2(
+                          hintText: 'Votre mot de passe',
+                          prefixIcon:
+                              const Icon(Icons.lock, color: Color(0xFFA8A8A8)),
+                        ),
+                        SizedBox(height: 14),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _textField3(
+                                hintText: 'Validez votre mot de passe',
+                                prefixIcon: const Icon(Icons.vpn_key,
+                                    color: Color(0xFFA8A8A8)),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 60),
+                        _button1(text: 'Creer un compte'),
+                        _button3(text: 'Se connecter', isTransparent: true),
+                      ],
+                    ),
                   ),
-                  SizedBox(height: 60),
-                  _button1(text: 'Creer un compte'),
-                  _button3(text: 'Se connecter', isTransparent: true),
                 ],
               ),
             ),
@@ -218,7 +231,7 @@ class _RegisterState extends State<Register>
               _isLoading = true;
             });
             utilisateur =
-                await inscripteur.signUp(_user.email!, _user.password);
+                await inscripteur.signUp(_user.email!, _user.password!);
             setState(() {
               _isLoading = false;
             });
@@ -226,6 +239,18 @@ class _RegisterState extends State<Register>
             var verif = utilisateur;
             if (verif != 0 || verif != null) {
               await showSuccessfulDialog();
+              showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  isDismissible: false,
+                  builder: (BuildContext context) {
+                    return const Splash_screen(); // votre page de chargement
+                  });
+              await Future.delayed(const Duration(seconds: 2), () {
+                Navigator.of(context).pop(); // fermer la feuille
+              });
+              Fonctions.creerUtilisateur(Fonctions.getUserEmail(),
+                  Fonctions.genererCodeParrainage(), tel);
               Future.delayed(Duration(seconds: 0), () {
                 if (mounted) {
                   Navigator.pushReplacement(
@@ -310,6 +335,18 @@ class _RegisterState extends State<Register>
               _isLoading = false;
             });
             await showSuccessfulDialog();
+            showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                isDismissible: false,
+                builder: (BuildContext context) {
+                  return const Splash_screen(); // votre page de chargement
+                });
+            await Future.delayed(const Duration(seconds: 2), () {
+              Navigator.of(context).pop(); // fermer la feuille
+            });
+            await Fonctions.creerUtilisateur(Fonctions.getUserEmail(),
+                Fonctions.genererCodeParrainage(), tel);
             Future.delayed(Duration(seconds: 0), () {
               if (mounted) {
                 Navigator.pushReplacement(
@@ -416,10 +453,7 @@ class _RegisterState extends State<Register>
           if (value == null || value.isEmpty) {
             return 'Veuillez entrer votre mot de passe';
           }
-          // Vérifier si le texte respecte un format d'email
-          if (!EmailValidator.validate(value)) {
-            return 'Veuillez entrer un mot de passe valide';
-          }
+
           // Si tout est ok, renvoyer null
           _user.password = value;
           return null;
@@ -476,8 +510,41 @@ class _RegisterState extends State<Register>
           _user.password = value;
           return null;
         },
+      );
+
+  Widget _textField4({required String hintText, required Widget prefixIcon}) =>
+      TextFormField(
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w400,
+            color: const Color(0xFFA8A8A8),
+          ),
+          prefixIcon: prefixIcon,
+          contentPadding: EdgeInsets.symmetric(horizontal: 17, vertical: 22),
+          border: const OutlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFFD0D0D0))),
+          focusedBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFFD0D0D0))),
+          enabledBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFFD0D0D0))),
+        ),
+        keyboardType:
+            TextInputType.number, // pour avoir un clavier adapté aux emails
+        // Ajouter un validateur pour le champ email
+        validator: (value) {
+          // Vérifier si le texte est vide
+          if (value == null || value.isEmpty) {
+            return 'Veuillez entrer votre numero de telephone';
+          }
+
+          // Si tout est ok, renvoyer null
+          tel = value;
+          return null;
+        },
         onChanged: (value) {
-          _user.password = value;
+          tel = value;
         },
       );
 

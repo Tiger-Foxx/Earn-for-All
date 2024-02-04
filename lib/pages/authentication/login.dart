@@ -214,7 +214,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
               _isLoading = true;
             });
             utilisateur =
-                await inscripteur.signIn(_user.email!, _user.password);
+                await inscripteur.signIn(_user.email!, _user.password!);
             setState(() {
               _isLoading = false;
             });

@@ -3,7 +3,8 @@ import 'package:earn_for_all/widgets/copiable_text.dart';
 import 'package:flutter/material.dart';
 
 class DrawerParrainage extends StatefulWidget {
-  const DrawerParrainage({super.key});
+  String? codeParrainage = "";
+  DrawerParrainage({super.key, this.codeParrainage});
 
   @override
   State<DrawerParrainage> createState() => _DrawerParrainageState();

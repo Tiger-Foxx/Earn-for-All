@@ -14,6 +14,7 @@ class Formulaire extends StatefulWidget {
 class _FormulaireState extends State<Formulaire> {
   String _choix = "BChain";
   int _nombre = 0;
+  int _numero = 0;
   bool _valide = false;
 
   @override
@@ -70,6 +71,45 @@ class _FormulaireState extends State<Formulaire> {
                   },
                   decoration: InputDecoration(
                     hintText: 'Montant XAF',
+                    hintStyle: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: const Color(0xFFA8A8A8),
+                    ),
+                    prefixIcon: Icon(Icons.card_giftcard),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 17, vertical: 22),
+                    border: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFFD0D0D0))),
+                    focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFFD0D0D0))),
+                    enabledBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFFD0D0D0))),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: TextFormField(
+                  keyboardType: TextInputType.number,
+                  onChanged: (String? valeur) {
+                    setState(() {
+                      try {
+                        _numero = int.parse(valeur!);
+                      } catch (e) {
+                        _numero = 0;
+                      }
+                    });
+                  },
+                  validator: (String? valeur) {
+                    if (valeur == null || valeur.isEmpty) {
+                      return "Ce champ est obligatoire";
+                    }
+
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Numero Compte OM/MOMO',
                     hintStyle: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,

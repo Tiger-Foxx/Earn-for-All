@@ -29,74 +29,76 @@ class ForgotPasswordScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Mot de passe oublié'),
       ),
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Center(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  SizedBox(height: 40),
-                  SizedBox(
-                    height: 185,
-                    child: Center(
-                      child: Image.asset(
-                        'assets/images/logoEFA (1).jpg',
-                        fit: BoxFit.contain,
+      body: SingleChildScrollView(
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Center(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    SizedBox(height: 40),
+                    SizedBox(
+                      height: 185,
+                      child: Center(
+                        child: Image.asset(
+                          'assets/images/logoEFA (1).jpg',
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ),
-                  ),
-                  Center(
-                    child: Text(
-                      "Un email de reinitialisation de mot de passe vous sera envoye",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w800,
-                        color: mainFontColor,
+                    Center(
+                      child: Text(
+                        "Un email de reinitialisation de mot de passe vous sera envoye",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          color: mainFontColor,
+                        ),
                       ),
                     ),
-                  ),
-                  // Un champ de texte pour saisir l'email
-                  Padding(
-                    padding: const EdgeInsets.all(18.0),
-                    child: TextFormField(
-                      controller: _emailController,
-                      decoration: InputDecoration(
-                        labelText: 'Email',
-                        hintText: 'Entrez votre email',
-                        border: OutlineInputBorder(),
+                    // Un champ de texte pour saisir l'email
+                    Padding(
+                      padding: const EdgeInsets.all(18.0),
+                      child: TextFormField(
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                          labelText: 'Email',
+                          hintText: 'Entrez votre email',
+                          border: OutlineInputBorder(),
+                        ),
+                        // Une fonction de validation pour vérifier si l'email est valide
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Veuillez entrer un email';
+                          }
+                          if (!value.contains('@')) {
+                            return 'Veuillez entrer un email valide';
+                          }
+                          return null;
+                        },
                       ),
-                      // Une fonction de validation pour vérifier si l'email est valide
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Veuillez entrer un email';
+                    ),
+                    SizedBox(height: 16.0),
+                    // Un bouton pour valider le formulaire et envoyer l'email
+                    ElevatedButton(
+                      onPressed: () {
+                        // Si le formulaire est valide, afficher un message
+                        if (_formKey.currentState!.validate()) {
+                          envoyerEmailReinitialisation(_emailController.text);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  'Un email de réinitialisation a été envoyé à ${_emailController.text}'),
+                            ),
+                          );
                         }
-                        if (!value.contains('@')) {
-                          return 'Veuillez entrer un email valide';
-                        }
-                        return null;
                       },
+                      child: Text('Valider'),
                     ),
-                  ),
-                  SizedBox(height: 16.0),
-                  // Un bouton pour valider le formulaire et envoyer l'email
-                  ElevatedButton(
-                    onPressed: () {
-                      // Si le formulaire est valide, afficher un message
-                      if (_formKey.currentState!.validate()) {
-                        envoyerEmailReinitialisation(_emailController.text);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                                'Un email de réinitialisation a été envoyé à ${_emailController.text}'),
-                          ),
-                        );
-                      }
-                    },
-                    child: Text('Valider'),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
