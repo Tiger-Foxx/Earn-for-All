@@ -1,10 +1,11 @@
+import 'package:earn_for_all/models/transactions.dart';
 import 'package:earn_for_all/pages/other/Investissement.dart';
 import 'package:earn_for_all/pages/other/succes/SuccesScreen.dart';
 import 'package:earn_for_all/pages/other/home_page.dart';
 import 'package:flutter/material.dart';
 
 class FormulaireRetrait extends StatefulWidget {
-  var cleGlobale;
+  GlobalKey<FormState> cleGlobale;
 
   FormulaireRetrait({required this.cleGlobale});
 
@@ -13,9 +14,11 @@ class FormulaireRetrait extends StatefulWidget {
 }
 
 class _FormulaireRetraitState extends State<FormulaireRetrait> {
-  String _choix = "BChain";
+  String _choix = "Trading";
   int _nombre = 0;
+  int _numero = 0;
   bool _valide = false;
+  transaction _transaction = transaction();
 
   @override
   Widget build(BuildContext context) {
@@ -37,12 +40,12 @@ class _FormulaireRetraitState extends State<FormulaireRetrait> {
                   },
                   items: const [
                     DropdownMenuItem(
-                      value: "BChain",
-                      child: Text("BChain"),
+                      value: "Trading",
+                      child: Text("Trading"),
                     ),
                     DropdownMenuItem(
-                      value: "Hiving",
-                      child: Text("Hiving"),
+                      value: "Halving",
+                      child: Text("Pre-Halving"),
                     ),
                   ],
                 ),

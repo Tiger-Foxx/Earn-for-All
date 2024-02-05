@@ -1,4 +1,5 @@
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
+import 'package:earn_for_all/pages/admin/acceuil_admin.dart';
 import 'package:earn_for_all/pages/admin/messages_screens_admin.dart';
 import 'package:earn_for_all/pages/other/Splash_screen.dart';
 import 'package:earn_for_all/pages/other/informations_page.dart';
@@ -16,31 +17,31 @@ import 'package:earn_for_all/pages/other/acceuil.dart';
 import 'package:earn_for_all/pages/other/transection_page.dart';
 import 'package:earn_for_all/theme/colors.dart';
 
-class HomePage extends StatefulWidget {
+class HomePageAdmin extends StatefulWidget {
   static var scaffoldKey;
 
-  HomePage({super.key});
+  HomePageAdmin({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HomePageAdmin> createState() => _HomePageAdminState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageAdminState extends State<HomePageAdmin> {
   int pageIndex = 0;
 
   List<Widget> pages = [
-    DailyPage(), //acceuil
+    DailyPageAdmin(), //acceuil
     IntermediateRetrait(), //retrait
-    MessagesScreen(), // messages
+    MessagesScreenAdmin(), // messages
     InformationPage(), //infos et service client
   ];
 
   @override
   Widget build(BuildContext context) {
     // Créer une GlobalKey de type ScaffoldState
-    HomePage.scaffoldKey = new GlobalKey<ScaffoldState>();
+    HomePageAdmin.scaffoldKey = new GlobalKey<ScaffoldState>();
     return Scaffold(
-        key: HomePage.scaffoldKey,
+        key: HomePageAdmin.scaffoldKey,
         backgroundColor: primary,
         body: getBody(),
         bottomNavigationBar: getFooter(),
@@ -76,7 +77,7 @@ class _HomePageState extends State<HomePage> {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         drawerScrimColor: Colors.transparent,
-        drawer: DrawerParrainage());
+        drawer: DrawerAdmin());
   }
 
   Widget getBody() {

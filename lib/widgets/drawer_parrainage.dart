@@ -1,9 +1,12 @@
+import 'package:earn_for_all/pages/other/acceuil.dart';
 import 'package:earn_for_all/theme/colors.dart';
+import 'package:earn_for_all/utils/fontions.dart';
 import 'package:earn_for_all/widgets/copiable_text.dart';
 import 'package:flutter/material.dart';
 
 class DrawerParrainage extends StatefulWidget {
   String? codeParrainage = "";
+
   DrawerParrainage({super.key, this.codeParrainage});
 
   @override
@@ -11,10 +14,14 @@ class DrawerParrainage extends StatefulWidget {
 }
 
 class _DrawerParrainageState extends State<DrawerParrainage> {
+  String _codeParrain = "";
+  GlobalKey<FormState> cleGlobale = GlobalKey<FormState>();
   bool is_parrain = false;
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      shape:
+          BeveledRectangleBorder(borderRadius: BorderRadius.all(Radius.zero)),
       backgroundColor: Color.fromARGB(255, 63, 40, 101),
       width: 316,
       child: SafeArea(
@@ -76,7 +83,7 @@ class _DrawerParrainageState extends State<DrawerParrainage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Regardez ICI votre code de parrainage, ou entrez le code de votre parrain,\nParrainer des personnes offre de gains supplementaires",
+                      "Regardez ICI votre code de parrainage, ou entrez le code de votre parrain,\nParrainer des personnes offre des gains supplementaires",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,
@@ -100,7 +107,9 @@ class _DrawerParrainageState extends State<DrawerParrainage> {
                             fontWeight: FontWeight.w900,
                           ),
                         ),
-                        CopyableTextButton("ASAHJADF5784541457DFSDFSF465547"),
+                        CopyableTextButton(DailyPage
+                                .UtilisateurCourantGeneral.codeParrainage ??
+                            "En attente du code..."),
                       ],
                     ),
                     SizedBox(
@@ -119,37 +128,66 @@ class _DrawerParrainageState extends State<DrawerParrainage> {
                     SizedBox(
                       height: 4,
                     ),
-                    TextField(
-                      decoration: InputDecoration(
-                        hintText: "CODE : XXXXXXXXXXXXXXXX",
-                        hintStyle: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: white,
+                    Form(
+                      key: cleGlobale,
+                      child: TextFormField(
+                        onChanged: (value) {
+                          _codeParrain = value ?? "";
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Veuillez entrer votre code de parrainage";
+                          }
+                          if (value ==
+                              DailyPage
+                                  .UtilisateurCourantGeneral.codeParrainage) {
+                            return "Vous ne pouvez pas vous parrainer vous meme";
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          hintText: "CODE : XXXXXXXXXXXXXXXX",
+                          hintStyle: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: white,
+                          ),
+                          prefixIcon: Icon(
+                            Icons.key_rounded,
+                            color: white,
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 17, vertical: 22),
+                          border: const OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFFD0D0D0))),
+                          focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFFD0D0D0))),
+                          enabledBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFFD0D0D0))),
                         ),
-                        prefixIcon: Icon(
-                          Icons.key_rounded,
-                          color: white,
-                        ),
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 17, vertical: 22),
-                        border: const OutlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xFFD0D0D0))),
-                        focusedBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xFFD0D0D0))),
-                        enabledBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xFFD0D0D0))),
                       ),
                     ),
                     SizedBox(
                       height: 28,
                     ),
                     ElevatedButton(
-                      onPressed: !is_parrain
+                      onPressed: (!is_parrain &&
+                              !(DailyPage.UtilisateurCourantGeneral
+                                      .est_parrainee ??
+                                  false))
                           ? () {
-                              setState(() {
-                                is_parrain = !is_parrain;
-                              });
+                              if (cleGlobale.currentState!.validate()) {
+                                setState(() {
+                                  if (Fonctions.parrainer(
+                                          Fonctions.getUserEmail(),
+                                          _codeParrain) ==
+                                      true) {
+                                    is_parrain = !is_parrain;
+                                    DailyPage.UtilisateurCourantGeneral
+                                        .est_parrainee = true;
+                                  }
+                                });
+                              }
                             }
                           : null,
                       style: ElevatedButton.styleFrom(
@@ -171,7 +209,7 @@ class _DrawerParrainageState extends State<DrawerParrainage> {
                       height: 24,
                     ),
                     Text(
-                      'Pour Chaque personne que vous parrainez , vous pouvez generer j\'usqua 25% de gains supplementaires',
+                      'Pour Chaque personne que vous parrainez , vous pouvez generer j\'usqua 9% de gains supplementaires',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,

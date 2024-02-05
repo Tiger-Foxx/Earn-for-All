@@ -307,6 +307,25 @@ class Fonctions {
     }
   }
 
+  static void sendEmail(String message, String email) {
+    String subject = "MESSAGE CLIENT EARN FOR ALL - BESOIN D'ASSISTANCE";
+    // Encoder le message, l'email et le sujet
+    String encodedMessage = Uri.encodeComponent(message);
+    String encodedEmail = Uri.encodeComponent(email);
+    String encodedSubject = Uri.encodeComponent(subject);
+
+    // Construire l'URL
+    String url =
+        'mailto:$encodedEmail?subject=$encodedSubject&body=$encodedMessage';
+
+    // Lancer l'URL
+    try {
+      launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } catch (e) {
+      print('Could not launch email: $e');
+    }
+  }
+
   static void sendTel(String number) {
     // Encoder le message
 
@@ -340,7 +359,7 @@ class Fonctions {
     }
   }
 
-// Une fonction qui permet d'incrémenter le nombre de parrainage d'un utilisateur
+// Une fonction qui permet de mettre un utilisateur comme etant parraine
   static Future<void> Metparrainee(String email) async {
     try {
       // Créer une référence au document correspondant à l'email
@@ -418,7 +437,7 @@ class Fonctions {
   }
 
 // Une fonction qui permet d'attribuer un parrain à un utilisateur dont l'email est donné en paramètre et le code de parrainage du parrain
-  static Future<void> parrainer(String email, String codeParrainage) async {
+  static Future<dynamic> parrainer(String email, String codeParrainage) async {
     try {
       // Récupérer l'utilisateur qui correspond à l'email
       USER utilisateur = await recupererUtilisateurParEmail(email);
@@ -433,20 +452,25 @@ class Fonctions {
           await mettreEmailParrain(email, parrain.email!);
           // Incrémenter le nombre de parrainage du parrain
           await incrementerNbParrainage(parrain.email!);
+          //mettre l'utilisateur comme etant parraine
           await Metparrainee(email);
           // Afficher un message de succès
           print("Le parrainage a été effectué avec succès");
+          return true;
         } else {
           // Si le parrain n'existe pas, afficher un message d'erreur
           print("Le code de parrainage n'est pas valide");
+          return false;
         }
       } else {
         // Si l'utilisateur est déjà parrainé, afficher un message d'erreur
         print("L'utilisateur est déjà parrainé");
+        return false;
       }
     } catch (e) {
       // Afficher un message d'erreur
       print("Une erreur s'est produite: $e");
+      return false;
     }
   }
 
@@ -561,7 +585,7 @@ class Fonctions {
   }
 
 // Une fonction qui permet de récupérer tous les messages (avec ID) de la collection
-  Future<List<MessagesEFA>> recupererTousLesMessages() async {
+  static Future<List<MessagesEFA>> recupererTousLesMessages() async {
     // Créer une liste vide pour stocker les messages
     List<MessagesEFA> messages = [];
     try {
@@ -569,7 +593,8 @@ class Fonctions {
       CollectionReference colRef =
           FirebaseFirestore.instance.collection('messages');
       // Obtenir tous les documents de la collection
-      QuerySnapshot querySnap = await colRef.get();
+      QuerySnapshot querySnap =
+          await colRef.orderBy("date", descending: true).get();
       // Parcourir tous les documents
       for (DocumentSnapshot docSnap in querySnap.docs) {
         // Extraire les données du document
@@ -579,7 +604,7 @@ class Fonctions {
           id: docSnap.id, // Obtenir l'ID du document
           texte: data['texte'],
 
-          date: data['date'],
+          date: data['date'].toDate(),
         );
         // Ajouter l'objet MessagesEFA à la liste
         messages.add(message);
@@ -595,7 +620,7 @@ class Fonctions {
   }
 
 // Une fonction qui permet de supprimer un message dont on connait l'ID
-  Future<void> supprimerMessage(String id) async {
+  static Future<void> supprimerMessage(String id) async {
     try {
       // Créer une référence au document correspondant à l'ID
       DocumentReference docRef =
@@ -607,6 +632,66 @@ class Fonctions {
     } catch (e) {
       // Afficher un message d'erreur
       print("Une erreur s'est produite: $e");
+    }
+  }
+
+// Une fonction qui permet d'ajouter des messages dans la collection firebase à partir d'un objet messagesEFA
+  static Future<void> ajouterMessages(MessagesEFA message) async {
+    try {
+      // Créer une référence à la collection messages
+      CollectionReference colRef =
+          FirebaseFirestore.instance.collection('messages');
+
+      await colRef.add(message.toJson());
+      // Afficher un message de succès
+      print("Le message a été ajouté avec succès");
+    } catch (e) {
+      // Afficher un message d'erreur
+      print("Une erreur s'est produite: $e");
+    }
+  }
+
+  static Future<List<double>> calculerBudget() async {
+    List<USER> utilisateurs = await recupererUtilisateurs();
+    double budget_Halving = 0;
+    double budget_Trading = 0;
+    for (USER utilisateur in utilisateurs) {
+      budget_Halving = budget_Halving + (utilisateur.soldeHiving ?? 0.0);
+      budget_Trading = budget_Trading + (utilisateur.soldeBchain ?? 0.0);
+    }
+    double len = utilisateurs.length + 0.0;
+    return List.from(<double>[budget_Halving, budget_Trading, len]);
+  }
+
+// Définir une fonction qui prend en paramètre l'email et le montant à ajouter au solde
+  Future<void> incrementerSolde(
+      String email, String type, double montant) async {
+    // Définir une référence à la collection utilisateurs
+    CollectionReference utilisateurs =
+        FirebaseFirestore.instance.collection('utilisateurs');
+    // Récupérer le document correspondant à l'email
+    DocumentSnapshot document = await utilisateurs.doc(email).get();
+
+    // Vérifier si le document existe
+    if (document.exists) {
+      // Récupérer le solde actuel
+
+      // Mettre à jour le document avec le nouveau solde
+      if (type == "Halving") {
+        await utilisateurs
+            .doc(email)
+            .update({'soldeHiving': FieldValue.increment(montant)});
+      } else {
+        await utilisateurs
+            .doc(email)
+            .update({'soldeBchain': FieldValue.increment(montant)});
+      }
+
+      // Afficher un message de succès
+      print('Le solde de $email a été mis à jour avec succès.');
+    } else {
+      // Afficher un message d'erreur
+      print('Aucun utilisateur trouvé avec cet email.');
     }
   }
 }

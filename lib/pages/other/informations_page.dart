@@ -119,6 +119,10 @@ class _InformationPageState extends State<InformationPage> {
               text: informations.MOMO_name),
           CopyableTextButton(informations.MOMO),
           InfoWidget(
+              ontap: () {
+                Fonctions.sendEmail(
+                    "Bonjour, je m'appelle : ", informations.email);
+              },
               icone: Icon(Icons.payment),
               titre: "EMAIL",
               size: size,

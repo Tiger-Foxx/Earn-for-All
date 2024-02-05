@@ -1,11 +1,14 @@
+import 'package:earn_for_all/models/messages_efa.dart';
+import 'package:earn_for_all/pages/admin/messages_screens_admin.dart';
 import 'package:earn_for_all/pages/other/Investissement.dart';
 import 'package:earn_for_all/pages/other/succes/SuccesScreen.dart';
 import 'package:earn_for_all/pages/other/succes/SuccesScreen_generale.dart';
 import 'package:earn_for_all/pages/other/home_page.dart';
+import 'package:earn_for_all/utils/fontions.dart';
 import 'package:flutter/material.dart';
 
 class FormulaireMessage extends StatefulWidget {
-  var cleGlobale;
+  GlobalKey<FormState> cleGlobale;
 
   FormulaireMessage({required this.cleGlobale});
 
@@ -15,6 +18,7 @@ class FormulaireMessage extends StatefulWidget {
 
 class _FormulaireMessageState extends State<FormulaireMessage> {
   String _message = '';
+  MessagesEFA _messagesEFA = MessagesEFA();
   bool _valide = false;
 
   @override
@@ -29,10 +33,11 @@ class _FormulaireMessageState extends State<FormulaireMessage> {
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: TextField(
-                  maxLength: 130,
+                  maxLength: 170,
                   maxLines: null,
                   onChanged: (String? message) {
                     _message = message ?? "";
+                    _messagesEFA.texte = _message;
                   },
                   decoration: InputDecoration(
                     hintText: 'Votre message',
@@ -57,7 +62,9 @@ class _FormulaireMessageState extends State<FormulaireMessage> {
                 padding: const EdgeInsets.all(15.0),
                 child: ElevatedButton(
                   onPressed: () async {
-                    if (true) {
+                    if (widget.cleGlobale.currentState!.validate()) {
+                      _messagesEFA.date = DateTime.now();
+                      Fonctions.ajouterMessages(_messagesEFA);
                       showModalBottomSheet(
                           context: context,
                           isScrollControlled: true,
@@ -68,8 +75,10 @@ class _FormulaireMessageState extends State<FormulaireMessage> {
                       await Future.delayed(const Duration(seconds: 3), () {
                         Navigator.of(context).pop(); // fermer la feuille
                       });
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => HomePage()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MessagesScreenAdmin()));
                     }
                   },
                   child: Text("Envoyer"),

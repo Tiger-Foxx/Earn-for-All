@@ -11,6 +11,8 @@ class _DrawerPresentationState extends State<DrawerPresentation> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      shape:
+          BeveledRectangleBorder(borderRadius: BorderRadius.all(Radius.zero)),
       backgroundColor: Color.fromARGB(255, 63, 40, 101),
       width: 316,
       child: SafeArea(

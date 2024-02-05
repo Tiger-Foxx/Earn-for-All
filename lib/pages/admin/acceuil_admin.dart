@@ -17,14 +17,14 @@ import "dart:math";
 
 import 'package:lottie/lottie.dart';
 
-class DailyPage extends StatefulWidget {
-  const DailyPage({super.key});
+class DailyPageAdmin extends StatefulWidget {
+  const DailyPageAdmin({super.key});
   static USER UtilisateurCourantGeneral = USER();
   @override
-  State<DailyPage> createState() => _DailyPageState();
+  State<DailyPageAdmin> createState() => _DailyPageAdminState();
 }
 
-class _DailyPageState extends State<DailyPage> {
+class _DailyPageAdminState extends State<DailyPageAdmin> {
   String? getUserEmail() {
     var _Auth = FirebaseAuth.instance;
 
@@ -35,6 +35,7 @@ class _DailyPageState extends State<DailyPage> {
   }
 
   USER utilisateurCourant = USER();
+  List<double> budgetsHT = <double>[0.0, 0.0];
 
   @override
   Widget build(BuildContext context) {
@@ -46,13 +47,15 @@ class _DailyPageState extends State<DailyPage> {
       future: Future.wait([
         Fonctions.recupererUtilisateurParEmail(Fonctions.getUserEmail()),
         Fonctions.recuperertransactionsParUtilisateur(Fonctions.getUserEmail()),
+        Fonctions.calculerBudget(),
       ]),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           utilisateurCourant = snapshot.data![0] as USER;
-          DailyPage.UtilisateurCourantGeneral = utilisateurCourant;
+          DailyPageAdmin.UtilisateurCourantGeneral = utilisateurCourant;
           List<transaction> transactions =
               snapshot.data![1] as List<transaction>;
+          budgetsHT = snapshot.data![2] as List<double>;
           return SafeArea(
               child: SingleChildScrollView(
             child: Column(
@@ -149,11 +152,8 @@ class _DailyPageState extends State<DailyPage> {
                                     height: 10,
                                   ),
                                   Text(
-                                    "Solde total\n" +
-                                        (utilisateurCourant.soldeBchain! +
-                                                utilisateurCourant.soldeHiving!)
-                                            .truncate()
-                                            .toString() +
+                                    "Total Invest Pre-Halving\n" +
+                                        (budgetsHT[0]).truncate().toString() +
                                         ' XAF',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
@@ -165,10 +165,21 @@ class _DailyPageState extends State<DailyPage> {
                                     height: 10,
                                   ),
                                   Text(
-                                    "parrainages\n" +
-                                        (utilisateurCourant.nb_parrainage ?? 0)
-                                            .truncate()
-                                            .toString(),
+                                    "Total Invest-Trading\n" +
+                                        (budgetsHT[1]).truncate().toString() +
+                                        " XAF",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        color: black),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "Utilisateurs : " +
+                                        (budgetsHT[2]).truncate().toString(),
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         fontSize: 12,

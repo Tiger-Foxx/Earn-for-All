@@ -1,3 +1,4 @@
+import 'package:earn_for_all/pages/admin/home_page_admin.dart';
 import 'package:earn_for_all/pages/authentication/login.dart';
 import 'package:earn_for_all/pages/other/home_page.dart';
 import 'package:earn_for_all/theme/colors.dart';
@@ -52,7 +53,7 @@ class _Splash_screenState extends State<Splash_screen> {
     final FirebaseAuth _auth = FirebaseAuth.instance;
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) =>
-          (_auth.currentUser == null ? Login() : HomePage()),
+          (_auth.currentUser == null ? Login() : HomePageAdmin()),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         const begin = Offset(1.0, 0.0);
         const end = Offset.zero;

@@ -12,4 +12,12 @@ class MessagesEFA {
     this.texte = "",
     this.date,
   });
+
+  // Une méthode toJson qui retourne un Map<String, dynamic>
+  Map<String, dynamic> toJson() {
+    return {
+      'date': date,
+      'texte': texte,
+    };
+  }
 }
