@@ -2,6 +2,7 @@ import 'package:earn_for_all/theme/colors.dart';
 import 'package:earn_for_all/widgets/copiable_text.dart';
 import 'package:earn_for_all/widgets/formulaire_invest.dart';
 import 'package:flutter/material.dart';
+import 'package:earn_for_all/utils/infos.dart';
 
 class InvestPage extends StatefulWidget {
   bool? is_valid = false;
@@ -42,8 +43,8 @@ class _InvestPageState extends State<InvestPage> {
                       width: 300,
                       child: Text(
                         widget.is_valid!
-                            ? "Choisissez le reseau ou faire le depot\nLes numeros sont aussi desponibles dans la section INFO"
-                            : "Entrez le montant que vous voulez investir,et choisissez Trading ou Pre-Halving",
+                            ? "Choisissez le reseau ou faire le depot\nLes numeros et adresses sont aussi desponibles dans la section INFO"
+                            : "Entrez le montant que vous voulez investir,et choisissez Trading ou Pre-Halving, vous pouvez aussi payer en USDT",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontFamily: 'Poppins',
@@ -92,7 +93,7 @@ class _InvestPageState extends State<InvestPage> {
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: CopyableTextButton("658866639"),
+                              child: CopyableTextButton(informations.OM),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(15.0),
@@ -128,7 +129,22 @@ class _InvestPageState extends State<InvestPage> {
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: CopyableTextButton("658866639"),
+                              child: CopyableTextButton(informations.MOMO),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                "ADDRESSE BEP 20 POUR LE DEPOT EN USDT",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w900,
+                                  color: const Color(0xFFF4F4F4),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: CopyableTextButton(informations.BEP20),
                             ),
                           ],
                         ),

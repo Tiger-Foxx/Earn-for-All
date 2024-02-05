@@ -109,6 +109,6 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
 flutter_icons:
-  image_path: "assets/images/logoEFA (1).jpg"
   android: true
   ios: true
+  image_path: "assets/images/ic_launcher.png"

@@ -174,11 +174,11 @@ class Fonctions {
         email_parrain: data['email_parrain'],
         est_parrainee: data['est_parrainee'],
         nb_parrainage: data['nb_parrainage'],
-        soldeBchain: data['soldeBchain'],
-        soldeHiving: data['soldeHiving'],
+        soldeBchain: data['soldeBchain'] + 0.0,
+        soldeHiving: data['soldeHiving'] + 0.0,
         tel: data['tel'],
-        gainBchain: data['gainBchain'],
-        gainHiving: data['gainHiving'],
+        gainBchain: data['gainBchain'] + 0.0,
+        gainHiving: data['gainHiving'] + 0.0,
       );
       // Retourner l'objet USER
       return utilisateur;
@@ -692,6 +692,94 @@ class Fonctions {
     } else {
       // Afficher un message d'erreur
       print('Aucun utilisateur trouvé avec cet email.');
+    }
+  }
+
+// Une fonction qui récupère un utilisateur par son email
+  static Future<transaction> recupererTransactionParID(String id) async {
+    // Créer une référence au document correspondant à l'email
+    DocumentReference docRef =
+        FirebaseFirestore.instance.collection('transactions').doc(id);
+    // Obtenir le document
+    DocumentSnapshot docSnap = await docRef.get();
+    // Vérifier si le document existe
+    if (docSnap.exists) {
+      // Extraire les données du document
+      Map<String, dynamic> data = docSnap.data() as Map<String, dynamic>;
+      // Créer un objet USER à partir des données
+      transaction transact = transaction(
+        id: docSnap.id, // Obtenir l'ID du document
+        montant: data['montant'],
+        date: data['date'].toDate(),
+        type: data['type'],
+        utilisateur: data['utilisateur'],
+        reseau: data['reseau'],
+      );
+      // Retourner l'objet USER
+      return transact;
+    } else {
+      // Si le document n'existe pas, afficher un message d'erreur
+      print("La transaction n'existe pas");
+      // Retourner un objet USER vide
+      return transaction();
+    }
+  }
+
+  // Définir une fonction qui prend en paramètre l'identifiant du document firestore qui correspond à la transaction
+  static Future<void> AppliquerTransaction(String id) async {
+    CollectionReference transactions =
+        FirebaseFirestore.instance.collection('transactions');
+    // Récupérer le document correspondant à l'identifiant
+    DocumentSnapshot document = await transactions.doc(id).get();
+    CollectionReference utilisateurs =
+        FirebaseFirestore.instance.collection('utilisateurs');
+    // Vérifier si le document existe
+    if (document.exists) {
+      // Récupérer l'email de l'utilisateur
+      transaction transactionCible = await recupererTransactionParID(id);
+
+      // Vérifier le type de la transaction
+      if (transactionCible.type == 'depot') {
+        // Vérifier le réseau de la transaction
+        if (transactionCible.reseau == 'Trading') {
+          // Augmenter le soldeBchain de l'utilisateur
+          await utilisateurs.doc(transactionCible.utilisateur).update({
+            'soldeBchain':
+                FieldValue.increment(transactionCible.montant ?? 0.0),
+          });
+        } else if (transactionCible.reseau == 'Halving') {
+          // Augmenter le soldeHiving de l'utilisateur
+          await utilisateurs.doc(transactionCible.utilisateur).update({
+            'soldeHiving':
+                FieldValue.increment(transactionCible.montant ?? 0.0),
+          });
+        }
+      } else if (transactionCible.type == 'retrait') {
+        // Vérifier le réseau de la transaction
+        if (transactionCible.reseau == 'Trading') {
+          // Vérifier si le soldeBchain de l'utilisateur est suffisant
+
+          // Diminuer le soldeBchain de l'utilisateur
+          await utilisateurs.doc(transactionCible.utilisateur).update({
+            'soldeBchain':
+                FieldValue.increment(-(transactionCible.montant ?? 0.0)),
+          });
+        } else if (transactionCible.reseau == 'Halving') {
+          // Vérifier si le soldeHiving de l'utilisateur est suffisant
+
+          // Diminuer le soldeHiving de l'utilisateur
+          await utilisateurs.doc(transactionCible.utilisateur).update({
+            'soldeHiving':
+                FieldValue.increment(-(transactionCible.montant ?? 0.0)),
+          });
+        }
+      }
+
+      // Afficher un message de succès
+      print('La transaction a été appliquée avec succès.');
+    } else {
+      // Afficher un message d'erreur
+      print('Aucune transaction trouvée avec cet identifiant.');
     }
   }
 }

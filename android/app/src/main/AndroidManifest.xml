@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="earn_for_all"
+        android:label="Earn For All"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

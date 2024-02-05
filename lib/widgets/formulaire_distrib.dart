@@ -1,12 +1,14 @@
+import 'package:earn_for_all/pages/admin/home_page_admin.dart';
 import 'package:earn_for_all/pages/other/Investissement.dart';
 import 'package:earn_for_all/pages/other/Splash_screen.dart';
 import 'package:earn_for_all/pages/other/succes/SuccesScreen.dart';
 import 'package:earn_for_all/pages/other/succes/SuccesScreen_generale.dart';
 import 'package:earn_for_all/pages/other/home_page.dart';
+import 'package:earn_for_all/utils/fontions.dart';
 import 'package:flutter/material.dart';
 
 class FormulaireDistrib extends StatefulWidget {
-  var cleGlobale;
+  GlobalKey<FormState> cleGlobale;
 
   FormulaireDistrib({required this.cleGlobale});
 
@@ -15,8 +17,8 @@ class FormulaireDistrib extends StatefulWidget {
 }
 
 class _FormulaireDistribState extends State<FormulaireDistrib> {
-  String _choix = "BChain";
-  int _nombre = 0;
+  String _choix = "Trading";
+  double _nombre = 0.0;
   bool _valide = false;
 
   @override
@@ -39,12 +41,12 @@ class _FormulaireDistribState extends State<FormulaireDistrib> {
                   },
                   items: const [
                     DropdownMenuItem(
-                      value: "BChain",
-                      child: Text("BChain"),
+                      value: "Trading",
+                      child: Text("Trading"),
                     ),
                     DropdownMenuItem(
-                      value: "Hiving",
-                      child: Text("Hiving"),
+                      value: "Halving",
+                      child: Text("Pre-Halving"),
                     ),
                   ],
                 ),
@@ -52,14 +54,14 @@ class _FormulaireDistribState extends State<FormulaireDistrib> {
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: TextFormField(
-                  maxLength: 3,
+                  maxLength: 10,
                   keyboardType: TextInputType.number,
                   onChanged: (String? valeur) {
                     setState(() {
                       try {
-                        _nombre = int.parse(valeur!);
+                        _nombre = double.parse(valeur!);
                       } catch (e) {
-                        _nombre = 0;
+                        _nombre = 0.0;
                       }
                     });
                   },
@@ -95,7 +97,8 @@ class _FormulaireDistribState extends State<FormulaireDistrib> {
                 padding: const EdgeInsets.all(15.0),
                 child: ElevatedButton(
                   onPressed: () async {
-                    if (true) {
+                    if (widget.cleGlobale.currentState!.validate()) {
+                      Fonctions.distribuer(_nombre, _choix);
                       showModalBottomSheet(
                           context: context,
                           isScrollControlled: true,
@@ -116,8 +119,12 @@ class _FormulaireDistribState extends State<FormulaireDistrib> {
                       await Future.delayed(const Duration(seconds: 3), () {
                         Navigator.of(context).pop(); // fermer la feuille
                       });
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => HomePage()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Splash_screen.isAdmin
+                                  ? HomePageAdmin()
+                                  : HomePage()));
                     }
                   },
                   child: Text("Valider"),

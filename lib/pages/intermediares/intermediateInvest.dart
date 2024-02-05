@@ -43,7 +43,7 @@ class _IntermediateState extends State<Intermediate> {
                 ),
                 SizedBox(height: 11),
                 Text(
-                  "Vous voulez investir sur la plateforme, pour cela remplissez le montant ,puis effectuez le depot Orange OU MTN sur une des adresses de la Plateforme\nToutes les adresses sont disponibles dans la section INFOS",
+                  "Vous voulez investir sur la plateforme, pour cela remplissez le montant ,puis effectuez le depot Orange  MTN OU BEP20(USDT) sur une des adresses de la Plateforme\nToutes les adresses sont disponibles dans la section INFOS",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'Poppins',

@@ -205,7 +205,7 @@ class _DailyPageAdminState extends State<DailyPageAdmin> {
                                           .toString() +
                                       " XAF",
                                   style: TextStyle(
-                                      fontSize: 16,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w600,
                                       color: mainFontColor),
                                 ),
@@ -235,7 +235,7 @@ class _DailyPageAdminState extends State<DailyPageAdmin> {
                                           .toString() +
                                       " XAF",
                                   style: TextStyle(
-                                      fontSize: 16,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w600,
                                       color: mainFontColor),
                                 ),
@@ -264,7 +264,7 @@ class _DailyPageAdminState extends State<DailyPageAdmin> {
                                           .toString() +
                                       " XAF",
                                   style: TextStyle(
-                                      fontSize: 16,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w600,
                                       color: mainFontColor),
                                 ),
@@ -352,6 +352,7 @@ class _DailyPageAdminState extends State<DailyPageAdmin> {
                                 transaction tx = transactions[index];
                                 // On retourne un widget TransactionCard avec les données de la transaction
                                 return TransactionCard(
+                                  reseau: tx.reseau,
                                   valid: tx.isValid,
                                   type: tx.type!,
                                   date: tx.date!.toString(),
@@ -413,6 +414,7 @@ class _DailyPageAdminState extends State<DailyPageAdmin> {
 
 class TransactionCard extends StatefulWidget {
   String type = 'depot';
+  String? reseau = '';
   String date = '';
   String price = '';
   bool? valid = true;
@@ -423,6 +425,7 @@ class TransactionCard extends StatefulWidget {
       required this.date,
       required this.size,
       required this.price,
+      this.reseau,
       this.valid});
 
   @override
@@ -483,11 +486,11 @@ class _TransactionCardState extends State<TransactionCard> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                widget.type,
+                                widget.type + ">" + (widget.reseau ?? ""),
                                 style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 13,
                                     color: black,
-                                    fontWeight: FontWeight.bold),
+                                    fontWeight: FontWeight.w900),
                               ),
                               SizedBox(
                                 height: 5,

@@ -186,6 +186,7 @@ class _MessageContainerState extends State<MessageContainer> {
           is_valid = true;
 
           Fonctions.validerTransaction(widget.id ?? "");
+          Fonctions.AppliquerTransaction(widget.id ?? "");
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

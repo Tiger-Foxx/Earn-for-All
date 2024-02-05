@@ -26,4 +26,19 @@ class USER {
     this.gainBchain,
     this.gainHiving,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'email': email,
+      'tel': tel,
+      'codeParrainage': codeParrainage,
+      'est_parrainee': est_parrainee,
+      'email_parrain': email_parrain,
+      'nb_parrainage': nb_parrainage,
+      'soldeBchain': soldeBchain,
+      'gainBchain': gainBchain,
+      'gainHiving': gainHiving,
+      'gainParrainage': gainParrainage,
+    };
+  }
 }

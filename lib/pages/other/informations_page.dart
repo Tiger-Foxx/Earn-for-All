@@ -91,14 +91,14 @@ class _InformationPageState extends State<InformationPage> {
           ),
           InfoWidget(
               ontap: () {
-                Fonctions.sendMsg(
-                    "MESSAGE EARN FOR ALL\n\nBONJOUR JE M'APPELLE :\nJE VIENS POUR :",
-                    informations.whatsapp);
+                Fonctions.sendEmail(
+                    "Bonjour, je m'appelle : ", informations.email);
               },
-              icone: Icon(Icons.phone),
-              titre: "Service Client",
+              icone: Icon(Icons.message),
+              titre: "Service client Email",
               size: size,
-              text: informations.whatsapp),
+              text: "EMAIL EARN FOR ALL-SERVICE CLIENT"),
+          CopyableTextButton(informations.email),
           CopyableTextButton(informations.whatsapp),
           InfoWidget(
               ontap: () {
@@ -123,11 +123,17 @@ class _InformationPageState extends State<InformationPage> {
                 Fonctions.sendEmail(
                     "Bonjour, je m'appelle : ", informations.email);
               },
-              icone: Icon(Icons.payment),
+              icone: Icon(Icons.message),
               titre: "EMAIL",
               size: size,
               text: "EMAIL EARN FOR ALL"),
           CopyableTextButton(informations.email),
+          InfoWidget(
+              icone: Icon(Icons.payment),
+              titre: "BEP 20",
+              size: size,
+              text: "ADRESSE BRP 20 EARN FOR ALL"),
+          CopyableTextButton(informations.BEP20),
           Padding(
             padding:
                 const EdgeInsets.only(top: 20, bottom: 10, right: 20, left: 20),

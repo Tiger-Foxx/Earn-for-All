@@ -7,6 +7,7 @@ import 'package:earn_for_all/pages/authentication/login.dart';
 import 'package:earn_for_all/pages/authentication/register.dart';
 import 'package:earn_for_all/services/Authentification.dart';
 import 'package:earn_for_all/theme/colors.dart';
+import 'package:earn_for_all/utils/fontions.dart';
 import 'package:earn_for_all/widgets/drawer_presentation.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
@@ -306,6 +307,18 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
               _isLoading = false;
             });
             await showSuccessfulDialog();
+            showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                isDismissible: false,
+                builder: (BuildContext context) {
+                  return const Splash_screen(); // votre page de chargement
+                });
+            await Future.delayed(const Duration(seconds: 2), () {
+              Navigator.of(context).pop(); // fermer la feuille
+            });
+            await Fonctions.creerUtilisateur(Fonctions.getUserEmail(),
+                Fonctions.genererCodeParrainage(), "0");
 
             Future.delayed(Duration(seconds: 0), () {
               if (mounted) {

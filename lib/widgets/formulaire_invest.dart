@@ -69,8 +69,8 @@ class _FormulaireState extends State<Formulaire> {
                     if (valeur == null || valeur.isEmpty) {
                       return "Ce champ est obligatoire";
                     }
-                    if (_nombre < 15000 || _nombre > 500000) {
-                      return "La valeur doit être comprise entre 15 000 et 500 000";
+                    if (_nombre < 3500 || _nombre > 500000) {
+                      return "La valeur doit être comprise entre 15 00 et 500 000";
                     }
                     return null;
                   },
@@ -94,9 +94,20 @@ class _FormulaireState extends State<Formulaire> {
                 ),
               ),
               Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Si vous payez par USDT-BEP20 , alors , mettez plutot votre addresse BEP20",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w900,
+                    color: Color.fromARGB(141, 162, 137, 204),
+                  ),
+                ),
+              ),
+              Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: TextFormField(
-                  maxLength: 9,
                   keyboardType: TextInputType.number,
                   onChanged: (String? valeur) {
                     setState(() {
@@ -116,7 +127,7 @@ class _FormulaireState extends State<Formulaire> {
                     return null;
                   },
                   decoration: InputDecoration(
-                    hintText: 'Numero Compte OM/MOMO',
+                    hintText: 'Numero Envoyeur OM/MOMO ou BEP20',
                     hintStyle: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
@@ -150,7 +161,7 @@ class _FormulaireState extends State<Formulaire> {
                     return null;
                   },
                   decoration: InputDecoration(
-                    hintText: 'Nom Compte OM|MOMO',
+                    hintText: 'Nom Compte OM|MOMO ou votre nom',
                     hintStyle: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,

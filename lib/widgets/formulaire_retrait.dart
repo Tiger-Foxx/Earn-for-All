@@ -1,7 +1,12 @@
 import 'package:earn_for_all/models/transactions.dart';
+import 'package:earn_for_all/pages/admin/acceuil_admin.dart';
+import 'package:earn_for_all/pages/admin/home_page_admin.dart';
 import 'package:earn_for_all/pages/other/Investissement.dart';
+import 'package:earn_for_all/pages/other/Splash_screen.dart';
+import 'package:earn_for_all/pages/other/acceuil.dart';
 import 'package:earn_for_all/pages/other/succes/SuccesScreen.dart';
 import 'package:earn_for_all/pages/other/home_page.dart';
+import 'package:earn_for_all/utils/fontions.dart';
 import 'package:flutter/material.dart';
 
 class FormulaireRetrait extends StatefulWidget {
@@ -36,6 +41,7 @@ class _FormulaireRetraitState extends State<FormulaireRetrait> {
                   onChanged: (String? choix) {
                     setState(() {
                       _choix = choix!;
+                      _transaction.reseau = _choix;
                     });
                   },
                   items: const [
@@ -58,6 +64,7 @@ class _FormulaireRetraitState extends State<FormulaireRetrait> {
                     setState(() {
                       try {
                         _nombre = int.parse(valeur!);
+                        _transaction.montant = _nombre + 0.0;
                       } catch (e) {
                         _nombre = 0;
                       }
@@ -67,8 +74,34 @@ class _FormulaireRetraitState extends State<FormulaireRetrait> {
                     if (valeur == null || valeur.isEmpty) {
                       return "Ce champ est obligatoire";
                     }
-                    if (_nombre < 15000 || _nombre > 500000) {
-                      return "La valeur doit être comprise entre 15 000 et 500 000";
+                    if (_choix == "Trading") {
+                      if ((((Splash_screen.isAdmin
+                                      ? DailyPageAdmin
+                                          .UtilisateurCourantGeneral.soldeBchain
+                                      : DailyPage.UtilisateurCourantGeneral
+                                          .soldeBchain) ??
+                                  0.0) *
+                              98 /
+                              100) <
+                          _nombre + 0.0) {
+                        return "Pas plus de 98% de votre budget";
+                      }
+                    }
+                    if (_choix == "Halving") {
+                      if ((((Splash_screen.isAdmin
+                                      ? DailyPageAdmin
+                                          .UtilisateurCourantGeneral.soldeHiving
+                                      : DailyPage.UtilisateurCourantGeneral
+                                          .soldeHiving) ??
+                                  0.0) *
+                              98 /
+                              100) <
+                          _nombre + 0.0) {
+                        return "Pas plus de 98% de votre budget";
+                      }
+                    }
+                    if (_nombre < 2500) {
+                      return "Au moins 2500 XAF";
                     }
                     return null;
                   },
@@ -94,6 +127,11 @@ class _FormulaireRetraitState extends State<FormulaireRetrait> {
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: TextFormField(
+                  onChanged: (String? valeur) {
+                    setState(() {
+                      _transaction.nom_OM_MOMO = valeur;
+                    });
+                  },
                   validator: (String? valeur) {
                     if (valeur == null || valeur.isEmpty) {
                       return "Ce champ est obligatoire";
@@ -124,6 +162,16 @@ class _FormulaireRetraitState extends State<FormulaireRetrait> {
                 padding: const EdgeInsets.all(10.0),
                 child: TextFormField(
                   keyboardType: TextInputType.number,
+                  onChanged: (String? valeur) {
+                    setState(() {
+                      try {
+                        _numero = int.parse(valeur!);
+                        _transaction.numero_OM_MOMO = _numero.toString();
+                      } catch (e) {
+                        _numero = 0;
+                      }
+                    });
+                  },
                   validator: (String? valeur) {
                     if (valeur == null || valeur.isEmpty) {
                       return "Ce champ est obligatoire";
@@ -154,7 +202,12 @@ class _FormulaireRetraitState extends State<FormulaireRetrait> {
                 padding: const EdgeInsets.all(15.0),
                 child: ElevatedButton(
                   onPressed: () async {
-                    if (true) {
+                    if (widget.cleGlobale.currentState!.validate()) {
+                      _transaction.reseau = _choix;
+                      _transaction.date = DateTime.now();
+                      _transaction.type = "retrait";
+                      _transaction.utilisateur = Fonctions.getUserEmail();
+                      await Fonctions.ajoutertransaction(_transaction);
                       showModalBottomSheet(
                           context: context,
                           isScrollControlled: true,
@@ -165,8 +218,12 @@ class _FormulaireRetraitState extends State<FormulaireRetrait> {
                       await Future.delayed(const Duration(seconds: 3), () {
                         Navigator.of(context).pop(); // fermer la feuille
                       });
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => HomePage()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Splash_screen.isAdmin
+                                  ? HomePageAdmin()
+                                  : HomePage()));
                     }
                   },
                   child: Text("Valider"),

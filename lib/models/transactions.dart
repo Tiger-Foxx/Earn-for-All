@@ -18,6 +18,7 @@ class transaction {
 
   // Le constructeur de la classe, avec des paramètres nommés et des valeurs par défaut
   transaction({
+    this.id,
     this.date,
     this.isValid = false,
     this.montant = 0.0001,
