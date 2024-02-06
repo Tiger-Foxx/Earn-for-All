@@ -6,6 +6,7 @@ import 'package:earn_for_all/pages/other/home_page.dart';
 import 'package:earn_for_all/pages/authentication/login.dart';
 import 'package:earn_for_all/pages/authentication/register.dart';
 import 'package:earn_for_all/services/Authentification.dart';
+import 'package:earn_for_all/services/messaging/firebase_api.dart';
 import 'package:earn_for_all/theme/colors.dart';
 import 'package:earn_for_all/utils/fontions.dart';
 import 'package:earn_for_all/widgets/drawer_presentation.dart';
@@ -214,14 +215,14 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
             setState(() {
               _isLoading = true;
             });
-            utilisateur =
+            var utilisateur =
                 await inscripteur.signIn(_user.email!, _user.password!);
             setState(() {
               _isLoading = false;
             });
 
             var verif = utilisateur;
-            if (verif != 0 || verif != null) {
+            if (verif != 0 && verif != null) {
               await showSuccessfulDialog();
               Future.delayed(Duration(seconds: 0), () {
                 if (mounted) {
@@ -312,6 +313,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                 isScrollControlled: true,
                 isDismissible: false,
                 builder: (BuildContext context) {
+                  firebaseApi().subscribeToTopic("all");
                   return const Splash_screen(); // votre page de chargement
                 });
             await Future.delayed(const Duration(seconds: 2), () {

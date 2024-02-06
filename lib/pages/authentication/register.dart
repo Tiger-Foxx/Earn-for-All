@@ -5,6 +5,7 @@ import 'package:earn_for_all/pages/other/home_page.dart';
 import 'package:earn_for_all/pages/authentication/login.dart';
 import 'package:earn_for_all/pages/authentication/register.dart';
 import 'package:earn_for_all/services/Authentification.dart';
+import 'package:earn_for_all/services/messaging/firebase_api.dart';
 import 'package:earn_for_all/theme/colors.dart';
 import 'package:earn_for_all/utils/fontions.dart';
 import 'package:earn_for_all/widgets/drawer_presentation.dart';
@@ -239,6 +240,7 @@ class _RegisterState extends State<Register>
             var verif = utilisateur;
             if (verif != 0 || verif != null) {
               await showSuccessfulDialog();
+              await firebaseApi().subscribeToTopic("all");
               showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
@@ -335,6 +337,7 @@ class _RegisterState extends State<Register>
               _isLoading = false;
             });
             await showSuccessfulDialog();
+            await firebaseApi().subscribeToTopic("all");
             showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,

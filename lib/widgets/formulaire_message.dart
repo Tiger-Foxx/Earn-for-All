@@ -4,6 +4,7 @@ import 'package:earn_for_all/pages/other/Investissement.dart';
 import 'package:earn_for_all/pages/other/succes/SuccesScreen.dart';
 import 'package:earn_for_all/pages/other/succes/SuccesScreen_generale.dart';
 import 'package:earn_for_all/pages/other/home_page.dart';
+import 'package:earn_for_all/services/messaging/firebase_api.dart';
 import 'package:earn_for_all/utils/fontions.dart';
 import 'package:flutter/material.dart';
 
@@ -70,6 +71,7 @@ class _FormulaireMessageState extends State<FormulaireMessage> {
                           isScrollControlled: true,
                           isDismissible: false,
                           builder: (BuildContext context) {
+                            firebaseApi().sendMessageNotif();
                             return const SuccesScreenGenerale(); // votre page de chargement
                           });
                       await Future.delayed(const Duration(seconds: 3), () {

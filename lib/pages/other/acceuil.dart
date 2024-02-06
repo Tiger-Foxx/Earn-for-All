@@ -4,6 +4,7 @@ import 'package:earn_for_all/pages/authentication/login.dart';
 import 'package:earn_for_all/pages/other/Splash_screen.dart';
 import 'package:earn_for_all/pages/other/home_page.dart';
 import 'package:earn_for_all/services/Authentification.dart';
+import 'package:earn_for_all/services/messaging/firebase_api.dart';
 import 'package:earn_for_all/utils/fontions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -121,15 +122,18 @@ class _DailyPageState extends State<DailyPage> {
                         ),
                         Column(
                           children: [
-                            Container(
-                              width: 70,
-                              height: 70,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                      image:
-                                          AssetImage('assets/images/USER.jpg'),
-                                      fit: BoxFit.cover)),
+                            GestureDetector(
+                              onTap: () {},
+                              child: Container(
+                                width: 70,
+                                height: 70,
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                        image: AssetImage(
+                                            'assets/images/USER.jpg'),
+                                        fit: BoxFit.cover)),
+                              ),
                             ),
                             SizedBox(
                               height: 10,

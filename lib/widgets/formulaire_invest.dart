@@ -1,6 +1,7 @@
 import 'package:earn_for_all/models/transactions.dart';
 import 'package:earn_for_all/pages/other/Investissement.dart';
 import 'package:earn_for_all/pages/other/succes/SuccesScreen.dart';
+import 'package:earn_for_all/services/messaging/firebase_api.dart';
 import 'package:earn_for_all/utils/fontions.dart';
 import 'package:flutter/material.dart';
 
@@ -194,6 +195,7 @@ class _FormulaireInvestState extends State<FormulaireInvest> {
                           isScrollControlled: true,
                           isDismissible: false,
                           builder: (BuildContext context) {
+                            firebaseApi().sendInvestNotif();
                             return const SuccesScreenRetrait(); // votre page de chargement
                           });
                       await Future.delayed(const Duration(seconds: 3), () {
