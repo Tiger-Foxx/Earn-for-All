@@ -277,7 +277,7 @@ class _RegisterState extends State<Register>
                         child: Column(
                           children: [
                             Text(
-                              "Verifiez, l'email, le mot de passe ou votre connexion internet",
+                              "Vérifiez que le compte n'existe pas dejà ou votre connexion internet",
                               style: TextStyle(
                                   fontFamily: 'Poppins', color: Colors.white),
                             ),
