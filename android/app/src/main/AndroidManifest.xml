@@ -31,4 +31,11 @@
             android:name="flutterEmbedding"
             android:value="2" />
     </application>
+    <!-- Pour demander la permission d'accéder à Internet -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Pour demander la permission de vérifier l'état du réseau -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Pour demander la permission d'envoyer des notifications non exemptées (Android 13 ou supérieur) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Pour configurer le service de notification Firebase -->
 </manifest>
