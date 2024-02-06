@@ -66,15 +66,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 itemCount: contents.length,
                 itemBuilder: (context, i) {
                   return Padding(
-                    padding: const EdgeInsets.all(40.0),
+                    padding: const EdgeInsets.all(37.0),
                     child: Column(
                       children: [
                         Image.asset(
                           contents[i].image,
-                          height: SizeConfig.blockV! * 30,
+                          height: SizeConfig.blockV! * 29,
                         ),
                         SizedBox(
-                          height: (height >= 840) ? 60 : 30,
+                          height: (height >= 840) ? 55 : 35,
                         ),
                         Text(
                           contents[i].title,
@@ -82,16 +82,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           style: TextStyle(
                             fontFamily: "Mulish",
                             fontWeight: FontWeight.w800,
-                            fontSize: (width <= 550) ? 25 : 30,
+                            fontSize: (width <= 550) ? 24 : 29,
                           ),
                         ),
-                        const SizedBox(height: 15),
+                        const SizedBox(height: 13),
                         Text(
                           contents[i].desc,
                           style: TextStyle(
                             fontFamily: "Mulish",
                             fontWeight: FontWeight.w300,
-                            fontSize: (width <= 550) ? 17 : 25,
+                            fontSize: (width <= 550) ? 15 : 22,
                           ),
                           textAlign: TextAlign.center,
                         )
