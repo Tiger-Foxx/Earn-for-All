@@ -1,5 +1,6 @@
 import 'package:earn_for_all/pages/admin/home_page_admin.dart';
 import 'package:earn_for_all/pages/authentication/login.dart';
+import 'package:earn_for_all/pages/intro/onboarding_screen.dart';
 import 'package:earn_for_all/pages/other/home_page.dart';
 import 'package:earn_for_all/theme/colors.dart';
 import 'package:earn_for_all/utils/fontions.dart';
@@ -70,9 +71,11 @@ class _Splash_screenState extends State<Splash_screen> {
           }
         }
         if (Splash_screen.isAdmin) {
-          return (_auth.currentUser == null ? Login() : HomePageAdmin());
+          return (_auth.currentUser == null
+              ? OnboardingScreen()
+              : HomePageAdmin());
         } else {
-          return (_auth.currentUser == null ? Login() : HomePage());
+          return (_auth.currentUser == null ? OnboardingScreen() : HomePage());
         }
       },
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
