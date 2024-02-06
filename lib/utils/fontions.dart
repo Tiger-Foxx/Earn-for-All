@@ -248,7 +248,7 @@ class Fonctions {
           'email': email,
           'email_parrain': '',
           'est_parrainee': false,
-          'nb_parrainage': 0.0001,
+          'nb_parrainage': 0,
           'soldeBchain': 0.00001,
           'soldeHiving': 0.00001,
           // Ajout du champ numéro de téléphone
