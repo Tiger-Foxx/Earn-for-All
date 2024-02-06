@@ -99,7 +99,6 @@ class _InformationPageState extends State<InformationPage> {
               size: size,
               text: "EMAIL EARN FOR ALL-SERVICE CLIENT"),
           CopyableTextButton(informations.email),
-          CopyableTextButton(informations.whatsapp),
           InfoWidget(
               ontap: () {
                 Fonctions.sendTel(informations.OM);
@@ -157,9 +156,8 @@ class _InformationPageState extends State<InformationPage> {
           ),
           GestureDetector(
             onTap: () {
-              Fonctions.sendMsg(
-                  "MESSAGE EARN FOR ALL\n\nBONJOUR JE M'APPELLE :\nJE VIENS POUR :",
-                  informations.whatsapp);
+              Fonctions.sendEmail(
+                  "Bonjour, je m'appelle : ", informations.email);
             },
             child: Container(
               padding: EdgeInsets.all(16),

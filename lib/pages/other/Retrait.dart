@@ -39,7 +39,7 @@ class _RetraitPageState extends State<RetraitPage> {
                     SizedBox(
                       width: 300,
                       child: Text(
-                        "Entrez le montant que vous voulez Retirer ,et choisissez Hiving ou BlockChain",
+                        "Entrez le montant que vous voulez Retirer ,et choisissez Pré-Halving ou Trading",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontFamily: 'Poppins',

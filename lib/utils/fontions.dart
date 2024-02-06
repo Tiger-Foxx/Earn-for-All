@@ -39,7 +39,7 @@ class Fonctions {
         transaction transact = transaction(
           date: data['date'].toDate(),
           isValid: data['is_valid'],
-          montant: data['montant'],
+          montant: data['montant'] + 0.0,
           nom_OM_MOMO: data['nom_OM_MOMO'],
           numero_OM_MOMO: data['numero_OM_MOMO'],
           reseau: data['reseau'],
@@ -212,8 +212,8 @@ class Fonctions {
           email_parrain: data['email_parrain'],
           est_parrainee: data['est_parrainee'],
           nb_parrainage: data['nb_parrainage'],
-          soldeBchain: data['soldeBchain'],
-          soldeHiving: data['soldeHiving'],
+          soldeBchain: data['soldeBchain'] + 0.0,
+          soldeHiving: data['soldeHiving'] + 0.0,
           tel: data['tel'],
         );
         // Ajouter l'objet USER à la liste
@@ -248,13 +248,13 @@ class Fonctions {
           'email': email,
           'email_parrain': '',
           'est_parrainee': false,
-          'nb_parrainage': 0,
-          'soldeBchain': 0,
-          'soldeHiving': 0,
+          'nb_parrainage': 0.0001,
+          'soldeBchain': 0.00001,
+          'soldeHiving': 0.00001,
           // Ajout du champ numéro de téléphone
           'tel': numeroTelephone,
-          'gainBchain': 0,
-          'gainHiving': 0,
+          'gainBchain': 0.00001,
+          'gainHiving': 0.00001,
         };
         // Écrire les données dans le document
         await docRef.set(data);
@@ -418,8 +418,8 @@ class Fonctions {
           email_parrain: data['email_parrain'],
           est_parrainee: data['est_parrainee'],
           nb_parrainage: data['nb_parrainage'],
-          soldeBchain: data['soldeBchain'],
-          soldeHiving: data['soldeHiving'],
+          soldeBchain: data['soldeBchain'] + 0.0,
+          soldeHiving: data['soldeHiving'] + 0.0,
           tel: data['tel'],
         );
       } else {
@@ -494,8 +494,8 @@ class Fonctions {
           email_parrain: data['email_parrain'],
           est_parrainee: data['est_parrainee'],
           nb_parrainage: data['nb_parrainage'],
-          soldeBchain: data['soldeBchain'],
-          soldeHiving: data['soldeHiving'],
+          soldeBchain: data['soldeBchain'] + 0.0,
+          soldeHiving: data['soldeHiving'] + 0.0,
           tel: data['tel'],
         );
         // Calculer le montant de l'augmentation du solde en fonction du paramètre x
@@ -514,14 +514,14 @@ class Fonctions {
           await docSnap.reference.update({
             'soldeBchain': FieldValue.increment(augmentation),
             // Stocker la différence dans le champ gainBchain
-            'gainBchain': augmentation,
+            'gainBchain': augmentation + 0.0,
           });
         } else if (solde == "Halving") {
           // Augmenter le soldeHiving de l'utilisateur
           await docSnap.reference.update({
             'soldeHiving': FieldValue.increment(augmentation),
             // Stocker la différence dans le champ gainHiving
-            'gainHiving': augmentation,
+            'gainHiving': augmentation + 0.0,
           });
         }
       }
@@ -537,8 +537,8 @@ class Fonctions {
           email_parrain: data['email_parrain'],
           est_parrainee: data['est_parrainee'],
           nb_parrainage: data['nb_parrainage'],
-          soldeBchain: data['soldeBchain'],
-          soldeHiving: data['soldeHiving'],
+          soldeBchain: data['soldeBchain'] + 0.0,
+          soldeHiving: data['soldeHiving'] + 0.0,
           tel: data['tel'],
         );
         // Vérifier si l'utilisateur est parrainé
@@ -566,7 +566,7 @@ class Fonctions {
                 .collection('utilisateurs')
                 .doc(parrain.email);
             // Calculer le bonus en fonction du gainHiving de l'utilisateur
-            bonus = utilisateur.gainHiving! * 9 / 100;
+            bonus = utilisateur.gainHiving! * 9 / 100 + 0.0;
             // Augmenter le soldeHiving du parrain
             await docRef.update({
               'soldeHiving': FieldValue.increment(bonus),

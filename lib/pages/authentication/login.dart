@@ -80,7 +80,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                   SizedBox(height: 25),
                   Center(
                     child: Text(
-                      'Content de te Revoir Sur ',
+                      'Content de te revoir sur ',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w900,
@@ -103,7 +103,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                     child: Padding(
                       padding: EdgeInsets.all(8.5),
                       child: Text(
-                        'Remplissez ce formulaire pour vous connecter ou connectez-vous avec Google',
+                        'Remplis ce formulaire pour te connecter ou connectes-toi avec ton compte Google',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontSize: 14,
@@ -144,7 +144,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                         ),
                         SizedBox(height: 60),
                         _button1(text: 'Se connecter'),
-                        _button3(text: 'Creer un compte', isTransparent: true),
+                        _button3(text: 'Créer un compte', isTransparent: true),
                         _button4(
                             text: 'Mot de passe oublie ?', isTransparent: true),
                       ],
@@ -489,7 +489,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
               const SizedBox(height: 8),
               const Center(
                 child: Text(
-                  "Connexion Reussie",
+                  "Connexion réussie",
                   style: TextStyle(
                       color: mainFontColor,
                       fontSize: 21,

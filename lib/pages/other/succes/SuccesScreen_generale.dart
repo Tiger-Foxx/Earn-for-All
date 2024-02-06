@@ -34,7 +34,7 @@ class _SuccesScreenGeneraleState extends State<SuccesScreenGenerale> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Operation Reussie !",
+                  "Operation réussie !",
                   textAlign: TextAlign.center,
                   style: TextStyle(color: mainFontColor, fontFamily: 'Poppins'),
                 ),

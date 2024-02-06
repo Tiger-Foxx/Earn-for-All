@@ -1,4 +1,5 @@
 import 'package:earn_for_all/theme/colors.dart';
+import 'package:earn_for_all/utils/fontions.dart';
 import 'package:earn_for_all/widgets/copiable_text.dart';
 import 'package:earn_for_all/widgets/formulaire_invest.dart';
 import 'package:flutter/material.dart';
@@ -55,14 +56,16 @@ class _InvestPageState extends State<InvestPage> {
                   ],
                 ),
                 !widget.is_valid!
-                    ? Formulaire(cleGlobale: _formKey)
+                    ? FormulaireInvest(cleGlobale: _formKey)
                     : Container(
                         child: Column(
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(15.0),
                               child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Fonctions.sendTel(informations.OM);
+                                },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor:
                                       Color.fromARGB(255, 199, 83, 6),
@@ -98,7 +101,9 @@ class _InvestPageState extends State<InvestPage> {
                             Padding(
                               padding: const EdgeInsets.all(15.0),
                               child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Fonctions.sendTel(informations.MOMO);
+                                },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor:
                                       Color.fromARGB(255, 227, 182, 1),
@@ -138,7 +143,7 @@ class _InvestPageState extends State<InvestPage> {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w900,
-                                  color: const Color(0xFFF4F4F4),
+                                  color: mainFontColor,
                                 ),
                               ),
                             ),

@@ -153,7 +153,7 @@ class _RegisterState extends State<Register>
                           children: [
                             Expanded(
                               child: _textField3(
-                                hintText: 'Validez votre mot de passe',
+                                hintText: 'Confirmez votre mot de passe',
                                 prefixIcon: const Icon(Icons.vpn_key,
                                     color: Color(0xFFA8A8A8)),
                               ),
@@ -161,7 +161,7 @@ class _RegisterState extends State<Register>
                           ],
                         ),
                         SizedBox(height: 60),
-                        _button1(text: 'Creer un compte'),
+                        _button1(text: 'Créer un compte'),
                         _button3(text: 'Se connecter', isTransparent: true),
                       ],
                     ),
@@ -536,7 +536,7 @@ class _RegisterState extends State<Register>
         validator: (value) {
           // Vérifier si le texte est vide
           if (value == null || value.isEmpty) {
-            return 'Veuillez entrer votre numero de telephone';
+            return 'Veuillez entrer votre numero de téléphone';
           }
 
           // Si tout est ok, renvoyer null
@@ -562,7 +562,7 @@ class _RegisterState extends State<Register>
               const SizedBox(height: 8),
               const Center(
                 child: Text(
-                  "Inscription Reussie",
+                  "Inscription réussie",
                   style: TextStyle(
                       color: mainFontColor,
                       fontSize: 21,

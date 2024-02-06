@@ -83,7 +83,7 @@ class _DrawerParrainageState extends State<DrawerParrainage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Regardez ICI votre code de parrainage, ou entrez le code de votre parrain,\nParrainer des personnes offre des gains supplementaires",
+                      "Regardez ICI votre code de parrainage, ou entrez le code de votre parrain.\nParrainer des personnes offre des gains supplémentaires",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,
@@ -131,6 +131,10 @@ class _DrawerParrainageState extends State<DrawerParrainage> {
                     Form(
                       key: cleGlobale,
                       child: TextFormField(
+                        enabled: (!is_parrain &&
+                            !(DailyPage
+                                    .UtilisateurCourantGeneral.est_parrainee ??
+                                false)),
                         onChanged: (value) {
                           _codeParrain = value ?? "";
                         },
@@ -146,7 +150,12 @@ class _DrawerParrainageState extends State<DrawerParrainage> {
                           return null;
                         },
                         decoration: InputDecoration(
-                          hintText: "CODE : XXXXXXXXXXXXXXXX",
+                          hintText: (!is_parrain &&
+                                  !(DailyPage.UtilisateurCourantGeneral
+                                          .est_parrainee ??
+                                      false))
+                              ? "CODE : XXXXXXXXXXXXXXXX"
+                              : "VOUS AVEZ DEJA UN PARRAIN",
                           hintStyle: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
@@ -209,7 +218,7 @@ class _DrawerParrainageState extends State<DrawerParrainage> {
                       height: 24,
                     ),
                     Text(
-                      'Pour Chaque personne que vous parrainez , vous pouvez generer j\'usqua 9% de gains supplementaires',
+                      'Pour chaque personne que vous parrainez , vous pouvez générer j\'usquà 9% de gains supplémentaires',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,

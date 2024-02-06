@@ -34,7 +34,7 @@ class _SuccesScreenRetraitState extends State<SuccesScreenRetrait> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Validation Reussie\n\nEn attente du depot... ",
+                  "Validation réussie\n\nEn attente de votre dépot... ",
                   textAlign: TextAlign.center,
                   style: TextStyle(color: mainFontColor, fontFamily: 'Poppins'),
                 ),

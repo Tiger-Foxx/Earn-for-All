@@ -37,12 +37,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         borderRadius: BorderRadius.all(
           Radius.circular(50),
         ),
-        color: Color(0xFF000000),
+        color: mainFontColor,
       ),
       margin: const EdgeInsets.only(right: 5),
       height: 10,
       curve: Curves.easeIn,
-      width: _currentPage == index ? 20 : 10,
+      width: _currentPage == index ? 26 : 10,
     );
   }
 
@@ -77,7 +77,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           height: (height >= 840) ? 55 : 35,
                         ),
                         Text(
-                          contents[i].title,
+                          contents[i].title.toUpperCase(),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontFamily: "Mulish",
@@ -137,9 +137,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                   MaterialPageRoute(
                                       builder: (context) => Login()));
                             },
-                            child: const Text("START"),
+                            child: const Text(
+                              "COMMENCER",
+                              style: TextStyle(color: Colors.white),
+                            ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.black,
+                              backgroundColor: mainFontColor,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(50),
                               ),
@@ -163,7 +166,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                   _controller.jumpToPage(2);
                                 },
                                 child: const Text(
-                                  "SKIP",
+                                  "PASSER",
                                   style: TextStyle(color: Colors.black),
                                 ),
                                 style: TextButton.styleFrom(
@@ -181,9 +184,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                     curve: Curves.easeIn,
                                   );
                                 },
-                                child: const Text("NEXT"),
+                                child: const Text(
+                                  "SUIVANT",
+                                  style: TextStyle(color: Colors.white),
+                                ),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.black,
+                                  backgroundColor: mainFontColor,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(50),
                                   ),

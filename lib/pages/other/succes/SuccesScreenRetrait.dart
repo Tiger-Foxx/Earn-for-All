@@ -34,7 +34,7 @@ class _SuccesScreenState extends State<SuccesScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Validation Reussie\n\nAttendez que l'administrateur vous fasse un Transfert",
+                  "Validation réussie1\n\nAttendez que l'administrateur vous fasse un transfert",
                   textAlign: TextAlign.center,
                   style: TextStyle(color: mainFontColor, fontFamily: 'Poppins'),
                 ),

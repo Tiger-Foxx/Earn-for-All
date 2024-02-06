@@ -4,21 +4,22 @@ import 'package:earn_for_all/pages/other/succes/SuccesScreen.dart';
 import 'package:earn_for_all/utils/fontions.dart';
 import 'package:flutter/material.dart';
 
-class Formulaire extends StatefulWidget {
+class FormulaireInvest extends StatefulWidget {
   GlobalKey<FormState> cleGlobale;
 
-  Formulaire({required this.cleGlobale});
+  FormulaireInvest({required this.cleGlobale});
 
   @override
-  State<Formulaire> createState() => _FormulaireState();
+  State<FormulaireInvest> createState() => _FormulaireInvestState();
 }
 
-class _FormulaireState extends State<Formulaire> {
+class _FormulaireInvestState extends State<FormulaireInvest> {
   String _choix = "Trading";
   int _nombre = 0;
   int _numero = 0;
   bool _valide = false;
-  transaction _transaction = transaction();
+  transaction _transaction = transaction(reseau: "Trading");
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -35,7 +36,7 @@ class _FormulaireState extends State<Formulaire> {
                   onChanged: (String? choix) {
                     setState(() {
                       _choix = choix!;
-                      _transaction.reseau = choix;
+                      _transaction.reseau = _choix;
                     });
                   },
                   items: const [

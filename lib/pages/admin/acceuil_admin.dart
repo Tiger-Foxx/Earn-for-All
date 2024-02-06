@@ -8,6 +8,7 @@ import 'package:earn_for_all/utils/fontions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:earn_for_all/theme/colors.dart';
@@ -110,6 +111,7 @@ class _DailyPageAdminState extends State<DailyPageAdmin> {
                                     MaterialPageRoute(
                                         builder: (context) => Login()));
                                 Authentification().signOut();
+                                SystemNavigator.pop();
                               },
                               child: Icon(
                                 Icons.logout,

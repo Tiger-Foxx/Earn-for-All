@@ -12,20 +12,19 @@ class OnboardingContents {
 
 List<OnboardingContents> contents = [
   OnboardingContents(
-    title: "Track Your work and get the result",
+    title: "Faites travailler votre argent ",
     image: "assets/images/image1.png",
-    desc: "Remember to keep track of your professional accomplishments.",
+    desc: "L'argent que vous investissez , est mis dans des évènements crypto.",
   ),
   OnboardingContents(
-    title: "Stay organized with team",
+    title: "Observez vos resultats",
     image: "assets/images/image2.png",
     desc:
-        "But understanding the contributions our colleagues make to our teams and companies.",
+        "Recevez vos gains 15 à 30 jours après investissement sur Trading, et à partir de 30 jours , sur Pré-Halving",
   ),
   OnboardingContents(
-    title: "Get notified when work happens",
+    title: "Soyez avertis au moindre changement",
     image: "assets/images/image3.png",
-    desc:
-        "Take control of notifications, collaborate live or on your own time.",
+    desc: "Sur Earn For all vous êtes informés de tout !",
   ),
 ];
