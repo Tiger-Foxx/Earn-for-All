@@ -539,19 +539,22 @@ class Fonctions {
           nb_parrainage: data['nb_parrainage'],
           soldeBchain: data['soldeBchain'] + 0.0,
           soldeHiving: data['soldeHiving'] + 0.0,
+          gainBchain: data['gainBchain'] + 0.0,
+          gainHiving: data['gainHiving'] + 0.0,
           tel: data['tel'],
         );
         // Vérifier si l'utilisateur est parrainé
         if (utilisateur.est_parrainee == true) {
           // Récupérer le parrain de l'utilisateur
-          USER parrain =
-              await recupererUtilisateurParEmail(utilisateur.email_parrain!);
+          USER parrain = await recupererUtilisateurParEmail(
+              utilisateur.email_parrain ?? "");
           // Calculer le montant du bonus du parrain en fonction du paramètre x
           // et du gain de l'utilisateur
           double bonus = 0;
           if (solde == "Trading") {
             // Calculer le bonus en fonction du gainBchain de l'utilisateur
             bonus = utilisateur.gainBchain! * 9 / 100;
+            print("bonus : " + bonus.toString());
             // Augmenter le soldeBchain du parrain
             DocumentReference docRef = FirebaseFirestore.instance
                 .collection('utilisateurs')
@@ -559,7 +562,6 @@ class Fonctions {
             await docRef.update({
               'soldeBchain': FieldValue.increment(bonus),
               // Stocker la différence dans le champ gainParrainage
-              'gainParrainage': FieldValue.increment(bonus),
             });
           } else if (solde == "Halving") {
             DocumentReference docRef = FirebaseFirestore.instance
@@ -571,7 +573,6 @@ class Fonctions {
             await docRef.update({
               'soldeHiving': FieldValue.increment(bonus),
               // Stocker la différence dans le champ gainParrainage
-              'gainParrainage': FieldValue.increment(bonus),
             });
           }
         }
@@ -580,7 +581,7 @@ class Fonctions {
       print("La distribution a été effectuée avec succès");
     } catch (e) {
       // Afficher un message d'erreur
-      print("Une erreur s'est produite: $e");
+      print("Une erreur s'est produite jjj: $e");
     }
   }
 

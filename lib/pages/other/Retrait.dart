@@ -39,7 +39,7 @@ class _RetraitPageState extends State<RetraitPage> {
                     SizedBox(
                       width: 300,
                       child: Text(
-                        "Entrez le montant que vous voulez Retirer ,et choisissez Pré-Halving ou Trading",
+                        "Entrez le montant que vous voulez Retirer ,et choisissez Pré-Halving ou Trading.\nLes frais de retrait coûtent 2% du montant à retirer.",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontFamily: 'Poppins',

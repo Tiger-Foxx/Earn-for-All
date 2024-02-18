@@ -18,6 +18,7 @@ class MessagesScreenAdmin extends StatelessWidget {
 
           return Scaffold(
             appBar: AppBar(
+              automaticallyImplyLeading: false,
               foregroundColor: Colors.black,
               backgroundColor: Colors.white,
               title: Text("Messages EFA"),
@@ -112,7 +113,6 @@ class MessagesScreenAdmin extends StatelessWidget {
                 ),
               ),
             ),
-            drawer: Drawer(),
           );
         } else if (snapshot.hasError) {
           print("Erreur :" + snapshot.error.toString());
@@ -224,7 +224,6 @@ class _MessageContainerState extends State<MessageContainer> {
                 children: [
                   Icon(Icons.message),
                   const SizedBox(width: 24),
-                  Icon(Icons.more_vert),
                 ],
               ),
             ],

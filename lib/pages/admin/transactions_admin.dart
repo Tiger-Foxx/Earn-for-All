@@ -18,6 +18,7 @@ class TransactionAdmin extends StatelessWidget {
 
           return Scaffold(
             appBar: AppBar(
+              automaticallyImplyLeading: false,
               foregroundColor: Colors.black,
               backgroundColor: Colors.white,
               title: Text("Transactions EFA"),
@@ -124,7 +125,6 @@ class TransactionAdmin extends StatelessWidget {
                 ),
               ),
             ),
-            drawer: Drawer(),
           );
         } else if (snapshot.hasError) {
           print("Erreur :" + snapshot.error.toString());

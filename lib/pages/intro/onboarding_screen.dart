@@ -91,7 +91,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           style: TextStyle(
                             fontFamily: "Mulish",
                             fontWeight: FontWeight.w300,
-                            fontSize: (width <= 550) ? 15 : 22,
+                            fontSize: (width <= 550) ? 13 : 20,
                           ),
                           textAlign: TextAlign.center,
                         )

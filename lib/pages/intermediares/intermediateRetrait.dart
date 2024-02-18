@@ -45,7 +45,7 @@ class _IntermediateRetraitState extends State<IntermediateRetrait> {
                 ),
                 SizedBox(height: 3),
                 Text(
-                  "Vous voulez retirer de l'argent de votre solde, pour celà remplissez le formulaire ,puis attendez que la plateforme vous fasse un dépot",
+                  "Vous voulez retirer de l'argent de votre solde, pour celà remplissez le formulaire ,puis attendez que la plateforme vous fasse un dépot\nNotez également que les frais de retrait sont de 2%",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'Poppins',

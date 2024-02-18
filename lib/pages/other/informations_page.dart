@@ -131,7 +131,7 @@ class _InformationPageState extends State<InformationPage> {
               icone: Icon(Icons.payment),
               titre: "BEP 20",
               size: size,
-              text: "ADRESSE BRP 20 EARN FOR ALL"),
+              text: "ADRESSE BEP 20 EARN FOR ALL"),
           CopyableTextButton(informations.BEP20),
           Padding(
             padding:

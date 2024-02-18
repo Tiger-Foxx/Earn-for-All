@@ -72,7 +72,7 @@ class _FormulaireInvestState extends State<FormulaireInvest> {
                       return "Ce champ est obligatoire";
                     }
                     if (_nombre < 3500 || _nombre > 500000) {
-                      return "La valeur doit être comprise entre 15 00 et 500 000";
+                      return "minimum 3500 XAF";
                     }
                     return null;
                   },
@@ -98,7 +98,7 @@ class _FormulaireInvestState extends State<FormulaireInvest> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Si vous payez par USDT-BEP20 , alors , mettez plutot votre addresse BEP20",
+                  "Si vous payez par USDT-BEP20 , alors , mettez plutot votre addresse BEP20 et votre nom",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
@@ -163,7 +163,7 @@ class _FormulaireInvestState extends State<FormulaireInvest> {
                     return null;
                   },
                   decoration: InputDecoration(
-                    hintText: 'Nom Compte OM|MOMO ou votre nom',
+                    hintText: 'Nom  OM|MOMO ou votre nom',
                     hintStyle: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w400,

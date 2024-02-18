@@ -7,6 +7,7 @@ import 'package:earn_for_all/pages/other/acceuil.dart';
 import 'package:earn_for_all/pages/other/succes/SuccesScreen.dart';
 import 'package:earn_for_all/pages/other/home_page.dart';
 import 'package:earn_for_all/services/messaging/firebase_api.dart';
+import 'package:earn_for_all/theme/colors.dart';
 import 'package:earn_for_all/utils/fontions.dart';
 import 'package:flutter/material.dart';
 
@@ -82,10 +83,10 @@ class _FormulaireRetraitState extends State<FormulaireRetrait> {
                                       : DailyPage.UtilisateurCourantGeneral
                                           .soldeBchain) ??
                                   0.0) *
-                              98 /
+                              100 /
                               100) <
                           _nombre + 0.0) {
-                        return "Pas plus de 98% de votre budget";
+                        return "plus que votre budget";
                       }
                     }
                     if (_choix == "Halving") {
@@ -95,14 +96,14 @@ class _FormulaireRetraitState extends State<FormulaireRetrait> {
                                       : DailyPage.UtilisateurCourantGeneral
                                           .soldeHiving) ??
                                   0.0) *
-                              98 /
+                              100 /
                               100) <
-                          _nombre + 0.0) {
-                        return "Pas plus de 98% de votre budget";
+                          (_nombre + 0.0)) {
+                        return "plus que votre budget";
                       }
                     }
                     if (_nombre < 2500) {
-                      return "Au moins 2500 XAF";
+                      return "minimum 2500 XAF ";
                     }
                     return null;
                   },
@@ -123,6 +124,21 @@ class _FormulaireRetraitState extends State<FormulaireRetrait> {
                     enabledBorder: const OutlineInputBorder(
                         borderSide: BorderSide(color: Color(0xFFD0D0D0))),
                   ),
+                ),
+              ),
+              SizedBox(
+                width: 300,
+                child: Text(
+                  "Vous recevrez : " +
+                      ((_transaction.montant ?? 0.0) * 98 / 100)
+                          .truncate()
+                          .toString() +
+                      " XAF",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w700,
+                      color: mainFontColor),
                 ),
               ),
               Padding(
@@ -239,7 +255,7 @@ class _FormulaireRetraitState extends State<FormulaireRetrait> {
   }
 
   void _verifierValidite() {
-    _valide = _choix != null && _nombre > 15000 && _nombre < 500000;
+    _valide = _choix != null && _nombre > 3500 && _nombre < 500000;
     setState(() {});
   }
 

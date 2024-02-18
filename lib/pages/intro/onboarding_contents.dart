@@ -20,7 +20,7 @@ List<OnboardingContents> contents = [
     title: "Observez vos resultats",
     image: "assets/images/image2.png",
     desc:
-        "Recevez vos gains 15 à 30 jours après investissement sur Trading, et à partir de 30 jours , sur Pré-Halving",
+        "Recevez vos gains instantanément(chaque jour) sur trading. Stackez et Préparez votre halving des notres.",
   ),
   OnboardingContents(
     title: "Soyez avertis au moindre changement",
