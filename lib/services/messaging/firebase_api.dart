@@ -73,8 +73,6 @@ class firebaseApi {
         'click_action': 'FLUTTER_NOTIFICATION_CLICK',
         'id': '1',
         'status': 'done',
-        'link':
-            'https://console.firebase.google.com/project/earn-for-all-6d227/firestore/data/~2Futilisateurs',
       },
     };
     return message;
@@ -180,8 +178,6 @@ class firebaseApi {
         'click_action': 'FLUTTER_NOTIFICATION_CLICK',
         'id': '1',
         'status': 'done',
-        'link':
-            'https://console.firebase.google.com/project/earn-for-all-6d227/firestore/data/~2Futilisateurs',
       },
     };
     return message;
